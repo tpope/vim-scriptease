@@ -8,8 +8,8 @@ Enjoy this amalgamation of crap I use for editing runtime files.
 * `:Scriptnames`: Load `:scriptnames` into the quickfix list.
 * `:Verbose`: Capture the output of a `:verbose` invocation into the preview
   window.
-* `:Vedit`: Edit a file found in the runtime path. (Also, ':Vsplit',
-  ':Vtabedit', etc.) Extracted from
+* `:Vedit`: Edit a file found in the runtime path. (Also, `:Vsplit`,
+  `:Vtabedit`, etc.) Extracted from
   [pathogen.vim](https://github.com/tpope/vim-pathogen).
 * `K`: Look up the `:help` for the VimL construct under the cursor.
 * `zS`: Show the active syntax highlighting groups under the cursor.
