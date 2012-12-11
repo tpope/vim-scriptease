@@ -313,6 +313,7 @@ function! s:runtime(bang, ...) abort
       let do[-1] .= ' '.escape(request, " \t|!")
     endif
   endfor
+  call extend(do, ['filetype detect'])
   let run = s:unlet_for(unlets)
   if run !=# ''
     let run .= '|'
