@@ -102,7 +102,7 @@ function! scriptease#dump(object, ...) abort
     endif
   endfor
   if type(a:object) ==# type('')
-    if a:object =~# "[\001-\037\"]"
+    if a:object =~# "[\001-\037']"
       let dump = '"'.s:gsub(a:object, "[\001-\037\"\\\\]", '\=get(s:escapes, submatch(0), printf("\\%03o", char2nr(submatch(0))))').'"'
     else
       let dump = string(a:object)
