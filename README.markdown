@@ -2,15 +2,17 @@
 
 Enjoy this amalgamation of crap I use for editing runtime files.
 
+## Features
+
 * `:PP`: Pretty print.
 * `:Runtime`: Reload runtime files.  Like `:runtime!`, but it unlets any
   include guards first.
 * `:Scriptnames`: Load `:scriptnames` into the quickfix list.
 * `:Verbose`: Capture the output of a `:verbose` invocation into the preview
   window.
-* `:Vedit`: Edit a file found in the runtime path. (Also, `:Vsplit`,
-  `:Vtabedit`, etc.) Extracted from
-  [pathogen.vim](https://github.com/tpope/vim-pathogen).
+* `:Vedit`: Edit a file relative the runtime path. For example,
+  `:Vedit plugin/scriptease.vim`. Also, `:Vsplit`, `:Vtabedit`, etc.
+  Extracted from [pathogen.vim](https://github.com/tpope/vim-pathogen).
 * `K`: Look up the `:help` for the VimL construct under the cursor.
 * `zS`: Show the active syntax highlighting groups under the cursor.
 
