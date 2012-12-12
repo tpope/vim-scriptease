@@ -39,6 +39,7 @@ K                       Like setting 'keywordprg' to :help, but slightly
                                                 *scriptease-:Runtime*
 :Runtime {file} ..      Invokes |:runtime|! on the given files, after
                         |:unlet|ting any include guards found within them.
+                        Invokes |:filetype| detect afterwards.
 
 :Runtime                In a Vim script, |:Runtime| on the current file.
                         Otherwise, re-perform filetype detection after
