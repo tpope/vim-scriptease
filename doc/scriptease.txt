@@ -20,6 +20,12 @@ zS                      Show the names of all syntax highlighting groups for
 K                       Like setting 'keywordprg' to :help, but slightly
                         smarter.  Only mapped in Vim files.
 
+                                                *scriptease-:Disable*
+:Disarm {file} ...      Attempt to disable a runtime file by removing its
+                        |:map|s, |:command|s, and |:autocmd|s.  Accepts either
+                        an absolute (~/.vim/plugin/scriptease.vim) or
+                        runtime-relative (plugin/scriptease.vim) path.
+
                                                 *scriptease-:PP*
 :PP {expr}              Pretty print the value of {expr}.
 

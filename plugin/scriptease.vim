@@ -327,6 +327,78 @@ command! -bang -bar -nargs=* -complete=customlist,s:Complete Runtime
       \ :exe s:runtime('<bang>', <f-args>)
 
 " }}}1
+" :Disarm {{{1
+
+function! scriptease#disarm(file)
+  let augroups = filter(readfile(a:file), 'v:val =~# "^\\s*aug\\%[roup]\\s"')
+  call filter(augroups, 'v:val !~# "^\\s*aug\\%[roup]\\s\\+END"')
+  for augroup in augroups
+    exe augroup
+    autocmd!
+    augroup END
+    exe s:sub(augroup, 'aug\%[roup]', '&!')
+  endfor
+  call s:disable_maps_and_commands(a:file, 0)
+  let tabnr = tabpagenr()
+  let winnr = winnr()
+  let altwinnr = winnr('#')
+  tabdo windo call s:disable_maps_and_commands(a:file, 1)
+  exe 'tabnext '.tabnr
+  exe altwinnr.'wincmd w'
+  exe winnr.'wincmd w'
+  exe s:unlet_for([a:file])
+endfunction
+
+function! s:disable_maps_and_commands(file, buf)
+  let last_set = "\tLast set from " . fnamemodify(a:file, ':~')
+  for line in split(scriptease#capture('verbose command'), "\n")
+    if line ==# last_set
+      if last[2] ==# (a:buf ? 'b' : ' ')
+        exe 'delcommand '.matchstr(last[4:-1], '^\w\+')
+      endif
+    else
+      let last = line
+    endif
+  endfor
+  for line in split(scriptease#capture('verbose map').scriptease#capture('verbose map!'), "\n")
+    if line ==# last_set
+      let map = matchstr(last, '^.\s\+\zs\S\+')
+      let rest = matchstr(last, '^.\s\+\S\+\s\+\zs[&* ][ @].*')
+      if rest[1] ==# (a:buf ? '@' : ' ')
+        let cmd = last =~# '^!' ? 'unmap! ' : last[0].'unmap '
+        exe cmd.(a:buf ? '<buffer>' : '').map
+      endif
+    else
+      let last = line
+    endif
+  endfor
+endfunction
+
+function! s:disarm(...) abort
+  let files = []
+  let unlets = []
+  for request in a:000
+    if request =~# '^\.\=[\\/]\|^\w:[\\/]\|^[%#~]\|^\d\+$'
+      let request = expand(scriptease#scriptname(request))
+      if isdirectory(request)
+        let request .= "/**/*.vim"
+      endif
+      let files += split(glob(request), "\n")
+    else
+      let files += split(globpath(&rtp, request, 1), "\n")
+    endif
+  endfor
+  for file in files
+    let unlets += [scriptease#disarm(expand(file))]
+  endfor
+  echo join(files, ' ')
+  return join(filter(unlets, 'v:val !=# ""'), '|')
+endfunction
+
+command! -bang -bar -nargs=* -complete=customlist,s:Complete Disarm
+      \ :exe s:disarm(<f-args>)
+
+" }}}1
 " :Vopen, :Vedit, ... {{{1
 
 function! s:runtime_findfile(file,count)
