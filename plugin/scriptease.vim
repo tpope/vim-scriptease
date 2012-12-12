@@ -240,7 +240,7 @@ function! s:unlet_for(files) abort
   let guards = []
   for file in a:files
     if filereadable(file)
-      let lines = readfile(file, 100)
+      let lines = readfile(file)
       for i in range(len(lines)-1)
         let unlet = matchstr(lines[i], '^if exists([''"]\%(\g:\)\=\zs\w\+\ze[''"]')
         if unlet !=# '' && lines[i+1] =~# '^ *finish\>' && index(guards, unlet) == -1
