@@ -17,6 +17,9 @@ Enjoy this amalgamation of crap I use for editing runtime files.
   Extracted from [pathogen.vim](https://github.com/tpope/vim-pathogen).
 * `K`: Look up the `:help` for the VimL construct under the cursor.
 * `zS`: Show the active syntax highlighting groups under the cursor.
+* `g!`: Eval a motion or selection as VimL and replace it with the result.
+  This is handy for doing math, even outside of VimL.  It's so handy, in fact,
+  that it probably deserves its own plugin.
 
 See the `:help` for details.
 

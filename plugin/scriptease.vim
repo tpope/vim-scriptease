@@ -180,6 +180,58 @@ command! -bang -range=0      -nargs=1 -complete=expression PPmsg
       \ :let v:errmsg = ''|call s:dumpmsg(<bang>0, <count>, eval(<q-args>))
 
 " }}}1
+" g! {{{1
+
+function! s:opfunc(type) abort
+  let sel_save = &selection
+  let cb_save = &clipboard
+  let reg_save = @@
+  try
+    set selection=inclusive clipboard-=unnamed clipboard-=unnamedplus
+    if a:type =~ '^\d\+$'
+      silent exe 'normal! ^v'.a:type.'$hy'
+    elseif a:type =~# '^.$'
+      silent exe "normal! `<" . a:type . "`>y"
+    elseif a:type ==# 'line'
+      silent exe "normal! '[V']y"
+    elseif a:type ==# 'block'
+      silent exe "normal! `[\<C-V>`]y"
+    else
+      silent exe "normal! `[v`]y"
+    endif
+    redraw
+    return @@
+  finally
+    let @@ = reg_save
+    let &selection = sel_save
+    let &clipboard = cb_save
+  endtry
+endfunction
+
+function! s:filterop(type) abort
+  let reg_save = @@
+  try
+    let expr = s:opfunc(a:type)
+    let @@ = matchstr(expr, '^\_s\+').scriptease#dump(eval(s:gsub(expr,'\n%(\s*\\)=',''))).matchstr(expr, '\_s\+$')
+    if @@ !~# '^\n*$'
+      normal! gvp
+    endif
+  catch /^.*/
+    echohl ErrorMSG
+    echo v:errmsg
+    echohl NONE
+  finally
+    let @@ = reg_save
+  endtry
+endfunction
+
+nnoremap <silent> <Plug>ScripteaseFilter :<C-U>set opfunc=<SID>filterop<CR>g@
+xnoremap <silent> <Plug>ScripteaseFilter :<C-U>call <SID>filterop(visualmode())<CR>
+nmap g! <Plug>ScripteaseFilter
+nmap g!! <Plug>ScripteaseFilter_
+xmap g! <Plug>ScripteaseFilter
+
+" }}}1
 " :Verbose {{{1
 
 command! -range=999998 -nargs=1 -complete=command Verbose
