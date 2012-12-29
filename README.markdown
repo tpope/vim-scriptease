@@ -9,6 +9,7 @@ Enjoy this amalgamation of crap I use for editing runtime files.
   include guards first.
 * `:Disarm`: Remove a runtime file's maps, commands, and autocommands,
   effectively disabling it.
+* `:Execute`: Execute part of a Vim script.
 * `:Scriptnames`: Load `:scriptnames` into the quickfix list.
 * `:Verbose`: Capture the output of a `:verbose` invocation into the preview
   window.

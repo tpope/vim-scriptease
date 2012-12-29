@@ -45,6 +45,15 @@ g!{motion}              Call |eval()| on the text the motion moves over and
                         an absolute (~/.vim/plugin/scriptease.vim) or
                         runtime-relative (plugin/scriptease.vim) path.
 
+                                                *scriptease-:Execute*
+:{range}Execute         Execute the VimL given by {range}.  This works by
+                        writing the selection to a file and sourcing it.
+                        Script local variables won't work as you expect,
+                        so it's preferable to use |:Runtime| if you can.
+
+:Execute                Execute the top-most VimL structure at the cursor line
+                        (for example, a function definition, or augroup).
+
                                                 *scriptease-:PP*
 :PP {expr}              Pretty print the value of {expr}.
 
