@@ -454,7 +454,13 @@ command! -bang -bar -nargs=* -complete=customlist,s:Complete Disarm
 " :Vopen, :Vedit, ... {{{1
 
 function! s:runtime_findfile(file,count)
-  let file = findfile(a:file, escape(&rtp, ' '), a:count)
+  let suffixesadd = &suffixesadd
+  try
+    let &suffixesadd = '.vim,.txt'
+    let file = findfile(a:file, escape(&runtimepath, ' '), a:count)
+  finally
+    let &suffixesadd = suffixesadd
+  endtry
   if type(file) == type([])
     return map(file, 'fnamemodify(v:val, ":p")')
   elseif file ==# ''
