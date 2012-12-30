@@ -283,6 +283,16 @@ function! scriptease#scriptname(file) abort
   endif
 endfunction
 
+function! scriptease#scriptid(filename) abort
+  let filename = fnamemodify(expand(a:filename), ':p')
+  for script in s:names()
+    if script.filename ==# filename
+      return +script.text
+    endif
+  endfor
+  return ''
+endfunction
+
 command! -bar Scriptnames call setqflist(s:names())|copen
 
 " }}}1
@@ -449,6 +459,83 @@ endfunction
 
 command! -bang -bar -nargs=* -complete=customlist,s:Complete Disarm
       \ :exe s:disarm(<f-args>)
+
+" }}}1
+" :Breakadd, :Breakdel {{{1
+
+augroup scriptease_breakadd
+  autocmd!
+  autocmd FileType vim
+        \ command! -bar -nargs=? -complete=custom,s:Complete_breakadd Breakadd
+        \ :exe s:break('add',<q-args>)
+  autocmd FileType vim
+        \ command! -bar -nargs=? -complete=custom,s:Complete_breakdel Breakdel
+        \ :exe s:break('del',<q-args>)
+augroup END
+
+function! s:breaksnr(arg) abort
+  let id = scriptease#scriptid('%')
+  if id
+    return s:gsub(a:arg, '^func.*\zs%(<s:|\<SID\>)', '<SNR>'.id.'_')
+  else
+    return a:arg
+  endif
+endfunction
+
+function! s:break(type, arg) abort
+  if a:arg ==# 'here' || a:arg ==# ''
+    let lnum = searchpair('^\s*fu\%[nction]\>.*(', '', '^\s*endf\%[unction]\>', 'Wbn')
+    if lnum && lnum < line('.')
+      let function = matchstr(getline(lnum), '^\s*\w\+!\=\s*\zs[^( ]*')
+      if function =~# '^s:\|^<SID>'
+        let id = scriptease#scriptid('%')
+        if id
+          let function = s:sub(function, '^s:|^\<SID\>', '<SNR>'.id.'_')
+        else
+          return 'echoerr "Could not determine script id"'
+        endif
+      endif
+      if function =~# '\.'
+        return 'echoerr "Dictionary functions not supported"'
+      endif
+      return 'break'.a:type.' func '.(line('.')==lnum ? '' : line('.')-lnum).' '.function
+    else
+      return 'break'.a:type.' here'
+    endif
+  endif
+  return 'break'.a:type.' '.s:breaksnr(a:arg)
+endfunction
+
+function! s:Complete_breakadd(A, L, P)
+  let functions = join(sort(map(split(scriptease#capture('function'), "\n"), 'matchstr(v:val, " \\zs[^(]*")')), "\n")
+  if a:L =~# '^\w\+\s\+\w*$'
+    return "here\nfile\nfunc"
+  elseif a:L =~# '^\w\+\s\+func\s*\d*\s\+s:'
+    let id = scriptease#scriptid('%')
+    return s:gsub(functions,'\<SNR\>'.id.'_', 's:')
+  elseif a:L =~# '^\w\+\s\+func '
+    return functions
+  elseif a:L =~# '^\w\+\s\+file '
+    return glob(a:A."*")
+  else
+    return ''
+  endif
+endfunction
+
+function! s:Complete_breakdel(A, L, P)
+  let args = matchstr(a:L, '\s\zs\S.*')
+  let list = split(scriptease#capture('breaklist'), "\n")
+  call map(list, 's:sub(v:val, ''^\s*\d+\s*(\w+) (.*)  line (\d+)$'', ''\1 \3 \2'')')
+  if a:L =~# '^\w\+\s\+\w*$'
+    return "*\nhere\nfile\nfunc"
+  elseif a:L =~# '^\w\+\s\+func\s'
+    return join(map(filter(list, 'v:val =~# "^func"'), 'v:val[5 : -1]'), "\n")
+  elseif a:L =~# '^\w\+\s\+file\s'
+    return join(map(filter(list, 'v:val =~# "^file"'), 'v:val[5 : -1]'), "\n")
+  else
+    return ''
+  endif
+endfunction
 
 " }}}1
 " :Vopen, :Vedit, ... {{{1
