@@ -565,6 +565,9 @@ function! s:find(count,cmd,file,lcd)
     return a:cmd.' '.s:fnameescape(file)
   elseif a:lcd
     let path = file[0:-strlen(a:file)-2]
+    if file[-4:-1] !=# a:file[-4:-1]
+      let path = path[0:-5]
+    endif
     return a:cmd.' '.s:fnameescape(file) . '|lcd '.s:fnameescape(path)
   else
     if a:cmd !~# '^edit'
