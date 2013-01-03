@@ -648,6 +648,8 @@ function! s:helptopic()
     return cword.'()'
   elseif syn ==# 'vimOption'
     return "'".cword."'"
+  elseif syn ==# 'vimUserAttrbKey'
+    return ':command-'.cword
   elseif pre =~# '^\s*:\=$'
     return ':'.cword
   elseif pre =~# '\<v:$'
