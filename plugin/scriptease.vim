@@ -599,7 +599,7 @@ command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vread
 " }}}1
 " :Time {{{1
 
-command! -bar -nargs=? -complete=command Time :exe s:time(<q-args>)
+command! -nargs=? -complete=command Time :exe s:time(<q-args>)
 
 function! s:time(cmd)
   let time = reltime()
