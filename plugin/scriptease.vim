@@ -597,6 +597,21 @@ command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vread
       \ :execute s:find(<count>,'read',<q-args>,<bang>0)
 
 " }}}1
+" :Time {{{1
+
+command! -bar -nargs=? -complete=command Time :exe s:time(<q-args>)
+
+function! s:time(cmd)
+  let time = reltime()
+  try
+    execute a:cmd
+  finally
+    echomsg matchstr(reltimestr(reltime(time)), '.*\..\{,3\}') . ' seconds to run :'.a:cmd
+  endtry
+  return ''
+endfunction
+
+" }}}1
 " zS {{{1
 
 function! scriptease#synnames(...) abort

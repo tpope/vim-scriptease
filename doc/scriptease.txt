@@ -75,6 +75,9 @@ g!{motion}              Call |eval()| on the text the motion moves over and
 :Scriptnames            Load |:scriptnames| into the quickfix list and
                         |:copen|.
 
+                                                *scriptease-:Time*
+:Time {command}         Run the given command and report how long it takes.
+
                                                 *scriptease-:Verbose*
 :[count]Verbose {command}
                         Like |:verbose|, but capture the results to a file

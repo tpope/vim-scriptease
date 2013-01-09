@@ -12,6 +12,7 @@ Enjoy this amalgamation of crap I use for editing runtime files.
 * `:Scriptnames`: Load `:scriptnames` into the quickfix list.
 * `:Verbose`: Capture the output of a `:verbose` invocation into the preview
   window.
+* `:Time`: Measure how long a command takes.
 * `:Breakadd`: Like its lowercase cousin, but makes it much easier to set
   breakpoints inside functions.  Also `:Breakdel`.
 * `:Vedit`: Edit a file relative the runtime path. For example,
