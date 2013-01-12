@@ -46,7 +46,8 @@ See the contribution guidelines for
 ## Self-Promotion
 
 Like scriptease.vim? Follow the repository on
-[GitHub](https://github.com/tpope/vim-scriptease). And if
+[GitHub](https://github.com/tpope/vim-scriptease) and vote for it on
+[vim.org](http://www.vim.org/scripts/script.php?script_id=4394). And if
 you're feeling especially charitable, follow [tpope](http://tpo.pe/) on
 [Twitter](http://twitter.com/tpope) and
 [GitHub](https://github.com/tpope).
