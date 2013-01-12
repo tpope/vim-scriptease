@@ -544,19 +544,13 @@ endfunction
 " }}}1
 " :Vopen, :Vedit, ... {{{1
 
-function! s:runtime_findfile(file,count)
-  let file = globpath(escape(&runtimepath, ' '), a:file, a:count)
-  if type(file) == type([])
-    return map(file, 'fnamemodify(v:val, ":p")')
-  elseif file ==# ''
-    return ''
-  else
-    return fnamemodify(file,':p')
-  endif
+function! s:runtime_globpath(file)
+  return split(globpath(escape(&runtimepath, ' '), a:file), "\n")
 endfunction
 
 function! s:find(count,cmd,file,lcd)
-  let file = s:runtime_findfile(a:file,a:count)
+  let found = s:runtime_globpath(a:file)
+  let file = get(found, a:count - 1, '')
   if file ==# ''
     return "echoerr 'E345: Can''t find file \"".a:file."\" in runtimepath'"
   elseif a:cmd ==# 'read'
@@ -568,7 +562,7 @@ function! s:find(count,cmd,file,lcd)
     if a:cmd !~# '^edit'
       exe a:cmd
     endif
-    call setloclist(0, map(s:runtime_findfile(a:file, -1),
+    call setloclist(0, map(found,
           \ '{"filename": v:val, "text": v:val[0 : -len(a:file)-2]}'))
     return 'll'.matchstr(a:cmd, '!$').' '.a:count
   endif
