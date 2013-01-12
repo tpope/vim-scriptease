@@ -65,13 +65,14 @@ function! s:Complete(A,L,P)
   endif
   let pattern = substitute(request,'/\|\'.sep,'*'.sep,'g').'*'
   let found = {}
-  for path in split(&runtimepath, ',')
-    let path = expand(path, ':p')
-    let matches = split(glob(path.sep.pattern),"\n")
-    call map(matches,'isdirectory(v:val) ? v:val.sep : v:val')
-    call map(matches,'expand(v:val, ":p")[strlen(path)+1:-1]')
-    for match in matches
-      let found[match] = 1
+  for glob in split(&runtimepath, ',')
+    for path in map(split(glob(glob), "\n"), 'fnamemodify(v:val, ":p")')
+      let matches = split(glob(path.sep.pattern),"\n")
+      call map(matches,'isdirectory(v:val) ? v:val.sep : v:val')
+      call map(matches,'fnamemodify(v:val, ":p")[strlen(path)+1:-1]')
+      for match in matches
+        let found[match] = 1
+      endfor
     endfor
   endfor
   return sort(keys(found))
@@ -324,7 +325,10 @@ endfunction
 
 function! s:findinrtp(path)
   let path = fnamemodify(a:path, ':p')
-  let candidates = filter(split(&runtimepath, ','), 'path[0 : len(v:val)-1] ==# v:val && path[len(v:val)] =~# "[\\/]"')
+  let candidates = []
+  for glob in split(&runtimepath, ',')
+    let candidates += filter(split(glob(glob), "\n"), 'path[0 : len(v:val)-1] ==# v:val && path[len(v:val)] =~# "[\\/]"')
+  endfor
   if empty(candidates)
     return ''
   endif
@@ -541,13 +545,7 @@ endfunction
 " :Vopen, :Vedit, ... {{{1
 
 function! s:runtime_findfile(file,count)
-  let suffixesadd = &suffixesadd
-  try
-    let &suffixesadd = '.vim,.txt'
-    let file = findfile(a:file, escape(&runtimepath, ' '), a:count)
-  finally
-    let &suffixesadd = suffixesadd
-  endtry
+  let file = globpath(escape(&runtimepath, ' '), a:file, a:count)
   if type(file) == type([])
     return map(file, 'fnamemodify(v:val, ":p")')
   elseif file ==# ''
@@ -565,9 +563,6 @@ function! s:find(count,cmd,file,lcd)
     return a:cmd.' '.s:fnameescape(file)
   elseif a:lcd
     let path = file[0:-strlen(a:file)-2]
-    if file[-4:-1] !=# a:file[-4:-1]
-      let path = path[0:-5]
-    endif
     return a:cmd.' '.s:fnameescape(file) . '|lcd '.s:fnameescape(path)
   else
     if a:cmd !~# '^edit'
