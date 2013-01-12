@@ -412,7 +412,7 @@ function! scriptease#disarm(file)
   exe 'tabnext '.tabnr
   exe altwinnr.'wincmd w'
   exe winnr.'wincmd w'
-  exe s:unlet_for([a:file])
+  return s:unlet_for([a:file])
 endfunction
 
 function! s:disable_maps_and_commands(file, buf)
