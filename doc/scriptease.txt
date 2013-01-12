@@ -33,11 +33,11 @@ g!{motion}              Call |eval()| on the text the motion moves over and
 :Breakadd ..            Like |:breakadd|, but accepts s: functions, and if you
                         give it an argument of "here" inside a function, it
                         sets a breakpoint inside the function as you would
-                        expect.
+                        expect.  Only available in Vim files.
 
                                                 *scriptease-:Breakdel*
 :Breakdel ..            Like |:breakdel|, but with the same enhancements as
-                        |:Breakadd|.
+                        |:Breakadd|.  Only available in Vim files.
 
                                                 *scriptease-:Disable*
 :Disarm {file} ..       Attempt to disable a runtime file by removing its

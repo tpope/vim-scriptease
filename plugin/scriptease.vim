@@ -469,11 +469,11 @@ command! -bang -bar -nargs=* -complete=customlist,s:Complete Disarm
 
 augroup scriptease_breakadd
   autocmd!
-  autocmd FileType vim
-        \ command! -bar -nargs=? -complete=custom,s:Complete_breakadd Breakadd
+  autocmd FileType vim command!
+        \   -buffer -bar -nargs=? -complete=custom,s:Complete_breakadd Breakadd
         \ :exe s:break('add',<q-args>)
-  autocmd FileType vim
-        \ command! -bar -nargs=? -complete=custom,s:Complete_breakdel Breakdel
+  autocmd FileType vim command!
+        \   -buffer -bar -nargs=? -complete=custom,s:Complete_breakdel Breakdel
         \ :exe s:break('del',<q-args>)
 augroup END
 
