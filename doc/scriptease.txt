@@ -30,17 +30,17 @@ g!{motion}              Call |eval()| on the text the motion moves over and
                         result.
 
                                                 *scriptease-:Breakadd*
-:Breakadd ...           Like |:breakadd|, but accepts s: functions, and if you
+:Breakadd ..            Like |:breakadd|, but accepts s: functions, and if you
                         give it an argument of "here" inside a function, it
                         sets a breakpoint inside the function as you would
                         expect.
 
                                                 *scriptease-:Breakdel*
-:Breakdel ...           Like |:breakdel|, but with the same enhancements as
+:Breakdel ..            Like |:breakdel|, but with the same enhancements as
                         |:Breakadd|.
 
                                                 *scriptease-:Disable*
-:Disarm {file} ...      Attempt to disable a runtime file by removing its
+:Disarm {file} ..       Attempt to disable a runtime file by removing its
                         |:map|s, |:command|s, and |:autocmd|s.  Accepts either
                         an absolute (~/.vim/plugin/scriptease.vim) or
                         runtime-relative (plugin/scriptease.vim) path.
@@ -82,8 +82,8 @@ g!{motion}              Call |eval()| on the text the motion moves over and
 :[count]Verbose {command}
                         Like |:verbose|, but capture the results to a file
                         with 'verbosefile' and load it in the preview window.
-                        This is mainly useful higher, noiser values of
-                        [count].
+                        This is particularly useful for higher, noiser values
+                        of [count].
 
                                         *scriptease-:Vedit* *scriptease-:Ve*
 :[count]Vedit {file}    Scan for [file] through the 'runtimepath', load all
