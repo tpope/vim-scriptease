@@ -246,7 +246,7 @@ function! s:Verbose(level, excmd)
   return
         \ 'try|' .
         \ 'let &verbosefile = '.string(temp).'|' .
-        \ a:level.'verbose exe '.string(a:excmd).'|' .
+        \ 'silent '.a:level.'verbose exe '.string(a:excmd).'|' .
         \ 'finally|' .
         \ 'let &verbosefile = '.string(verbosefile).'|' .
         \ 'endtry|' .
