@@ -129,7 +129,7 @@ g!{motion}              Call |eval()| on the text the motion moves over and
 :Vtabedit! {file}       |:Vopen| meets |:tabedit|.
 
                                                 *scriptease-:Vpedit!*
-:Vpedit! {file}         |:Vopen| meets |:pedit|.
+:Vpedit! {file}         |:Vedit| meets |:pedit|.
 
 
 ABOUT                                           *scriptease-about*

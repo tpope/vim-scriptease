@@ -582,7 +582,7 @@ command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vvsplit
 command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vtabedit
       \ :execute s:find(<count>,'tabedit',<q-args>,<bang>0)
 command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vpedit
-      \ :execute s:find(<count>,'pedit',<q-args>,<bang>0)
+      \ :execute s:find(<count>,'pedit<bang>',<q-args>,0)
 command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vread
       \ :execute s:find(<count>,'read',<q-args>,<bang>0)
 
