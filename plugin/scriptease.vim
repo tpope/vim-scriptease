@@ -554,7 +554,7 @@ function! s:find(count,cmd,file,lcd)
   let file = get(found, a:count - 1, '')
   if file ==# ''
     return "echoerr 'E345: Can''t find file \"".a:file."\" in runtimepath'"
-  elseif a:cmd ==# 'read'
+  elseif a:cmd =~# '^\%(read\|pedit!\=\)$'
     return a:cmd.' '.s:fnameescape(file)
   elseif a:lcd
     let path = file[0:-strlen(a:file)-2]
