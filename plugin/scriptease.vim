@@ -545,6 +545,15 @@ endfunction
 " }}}1
 " :Vopen, :Vedit, ... {{{1
 
+function! s:previewwindow()
+  for i in range(1, winnr('$'))
+    if getwinvar(i, '&previewwindow') == 1
+      return i
+    endif
+  endfor
+  return -1
+endfunction
+
 function! s:runtime_globpath(file)
   return split(globpath(escape(&runtimepath, ' '), a:file), "\n")
 endfunction
@@ -554,18 +563,29 @@ function! s:find(count,cmd,file,lcd)
   let file = get(found, a:count - 1, '')
   if file ==# ''
     return "echoerr 'E345: Can''t find file \"".a:file."\" in runtimepath'"
-  elseif a:cmd =~# '^\%(read\|pedit!\=\)$'
+  elseif a:cmd ==# 'read'
     return a:cmd.' '.s:fnameescape(file)
   elseif a:lcd
     let path = file[0:-strlen(a:file)-2]
     return a:cmd.' '.s:fnameescape(file) . '|lcd '.s:fnameescape(path)
   else
-    if a:cmd !~# '^edit'
+    let window = 0
+    let precmd = ''
+    let postcmd = ''
+    if a:cmd =~# '^pedit'
+      try
+        exe 'silent ' . a:cmd
+      catch /^Vim\%((\a\+)\)\=:E32/
+      endtry
+      let window = s:previewwindow()
+      let precmd = printf('%d wincmd w|', window)
+      let postcmd = '|wincmd w'
+    elseif a:cmd !~# '^edit'
       exe a:cmd
     endif
-    call setloclist(0, map(found,
+    call setloclist(window, map(found,
           \ '{"filename": v:val, "text": v:val[0 : -len(a:file)-2]}'))
-    return 'll'.matchstr(a:cmd, '!$').' '.a:count
+    return precmd . 'll'.matchstr(a:cmd, '!$').' '.a:count . postcmd
   endif
 endfunction
 
