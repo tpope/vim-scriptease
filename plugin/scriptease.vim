@@ -250,7 +250,7 @@ function! s:Verbose(level, excmd)
         \ 'finally|' .
         \ 'let &verbosefile = '.string(verbosefile).'|' .
         \ 'endtry|' .
-        \ 'pedit '.temp.'|wincmd P'
+        \ 'pedit '.temp.'|wincmd P|nnoremap q :bd<CR>'
 endfunction
 
 " }}}1
@@ -296,6 +296,74 @@ function! scriptease#scriptid(filename) abort
 endfunction
 
 command! -bar Scriptnames call setqflist(s:names())|copen
+
+" }}}1
+" :Messages {{{1
+
+command! -bar -bang Messages :execute s:Messages(<bang>0)
+
+function! s:Messages(bang) abort
+  let messages = map(split(scriptease#capture('messages'), '\n\+'), '{"text": v:val}')
+  for mi in range(len(messages))
+    let lnum = matchstr(messages[mi].text, '\C^line\s\+\zs\d\+\ze:$')
+    if !lnum || !mi
+      continue
+    endif
+    let function = matchstr(messages[mi-1].text, '.*\%( \|\.\.\)\zs.*\ze:$')
+    if empty(function)
+      continue
+    elseif function =~# '^\d\+$'
+      let function = '{' . function . '}'
+    endif
+    let list = &list
+    try
+      set nolist
+      let output = split(scriptease#capture('verbose function '.function), "\n")
+    finally
+      let &list = list
+    endtry
+    let filename = expand(matchstr(get(output, 1, ''), 'from \zs.*'))
+    if !filereadable(filename)
+      continue
+    endif
+    let implementation = map(output[2:-2], 'v:val[len(matchstr(output[-1],"^ *")) : -1]')
+    let body = []
+    let offset = 0
+    for line in readfile(filename)
+      if line =~# '^\s*\\' && !empty(body)
+        let body[-1][0] .= s:sub(line, '^\s*\\', '')
+        let offset += 1
+      else
+        call extend(body, [[s:gsub(line, "\t", repeat(" ", &tabstop)), offset]])
+      endif
+    endfor
+    for j in range(len(body)-len(implementation)-2)
+      if function =~# '^{'
+        let pattern = '.*\.'
+      elseif function =~# '^<SNR>'
+        let pattern = '\%(s:\|<SID>\)' . matchstr(function, '_\zs.*') . '\>'
+      else
+        let pattern = function . '\>'
+      endif
+      if body[j][0] =~# '\C^\s*fu\%[nction]!\=\s*'.pattern
+            \ && body[j + len(implementation) + 1][0] =~# '\C^\s*endf'
+            \ && map(body[j+1 : j+len(implementation)], 'v:val[0]') ==# implementation
+        let messages[mi].filename = filename
+        let messages[mi].lnum = j + body[j][1] + lnum + 1
+        let found = 1
+        break
+      endif
+    endfor
+  endfor
+  call setqflist(messages)
+  copen
+  $
+  if a:bang
+    clast
+    copen
+  endif
+  return ''
+endfunction
 
 " }}}1
 " :Runtime {{{1
@@ -690,12 +758,12 @@ endfunction
 " Settings {{{1
 
 function! s:setup() abort
-  let &l:path = escape(&runtimepath, ' ')
   setlocal suffixesadd=.vim keywordprg=:help
 endfunction
 
 augroup scriptease
   autocmd!
+  autocmd FileType vim,help let &l:path = escape(&runtimepath, ' ')
   autocmd FileType vim call s:setup()
   " Recent versions of vim.vim set iskeyword to include ":", which breaks among
   " other things tags. :(
