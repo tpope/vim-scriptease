@@ -684,6 +684,7 @@ function! s:time(cmd)
   try
     execute a:cmd
   finally
+    redraw
     echomsg matchstr(reltimestr(reltime(time)), '.*\..\{,3\}') . ' seconds to run :'.a:cmd
   endtry
   return ''
