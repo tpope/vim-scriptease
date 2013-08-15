@@ -282,7 +282,7 @@ function! s:Verbose(level, excmd)
         \ 'finally|' .
         \ 'let &verbosefile = '.string(verbosefile).'|' .
         \ 'endtry|' .
-        \ 'pedit '.temp.'|wincmd P|nnoremap q :bd<CR>'
+        \ 'pedit '.temp.'|wincmd P|nnoremap <buffer> q :bd<CR>'
 endfunction
 
 " }}}1
