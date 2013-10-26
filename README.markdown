@@ -6,7 +6,7 @@ Enjoy this amalgamation of crap I use for editing runtime files.
 
 * `:PP`: Pretty print.
 * `:Runtime`: Reload runtime files.  Like `:runtime!`, but it unlets any
-  include guards first.
+  include guards first. Can be configured to run upon saving Vim scripts.
 * `:Disarm`: Remove a runtime file's maps, commands, and autocommands,
   effectively disabling it.
 * `:Scriptnames`: Load `:scriptnames` into the quickfix list.

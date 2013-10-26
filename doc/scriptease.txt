@@ -71,6 +71,10 @@ g!{motion}              Call |eval()| on the text the motion moves over and
                         |:unlet|ting any include guards in the relevant
                         syntax, indent, and ftplugin files.
 
+                                                *scriptease-:ToggleAutoRuntime*
+:ToggleAutoRuntime      Toggle whether |:Runtime| should be run after saving
+                        Vim scripts or not.
+
                                                 *scriptease-:Scriptnames*
 :Scriptnames            Load |:scriptnames| into the quickfix list and
                         |:copen|.

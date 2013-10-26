@@ -342,6 +342,10 @@ function! s:runtime(bang, ...) abort
   let do = []
   let predo = ''
 
+  if a:bang && (!exists('g:scriptease_auto_runtime') || !g:scriptease_auto_runtime)
+    return ""
+  endif
+
   if a:0
     let files = a:000
   elseif &filetype ==# 'vim' || expand('%:e') ==# 'vim'
@@ -390,8 +394,17 @@ function! s:runtime(bang, ...) abort
   return predo.run
 endfunction
 
+function! s:toggle_auto_runtime(bang)
+  let g:scriptease_auto_runtime =
+        \ !exists('g:scriptease_auto_runtime') || g:scriptease_auto_runtime == 0
+  echo 'Auto reloading ' . (g:scriptease_auto_runtime ? 'enabled' : 'disabled')
+endfunction
+
 command! -bang -bar -nargs=* -complete=customlist,s:Complete Runtime
       \ :exe s:runtime('<bang>', <f-args>)
+
+command! -bang -bar -nargs=0 ToggleAutoRuntime
+      \ :call s:toggle_auto_runtime("<bang>")
 
 " }}}1
 " :Disarm {{{1
@@ -701,6 +714,8 @@ augroup scriptease
   " Recent versions of vim.vim set iskeyword to include ":", which breaks among
   " other things tags. :(
   autocmd Syntax vim setlocal iskeyword-=:
+
+  autocmd BufWritePost *.vim silent exe s:runtime('<bang>')
 augroup END
 
 " }}}1
