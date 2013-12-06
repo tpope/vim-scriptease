@@ -76,7 +76,8 @@ g!{motion}              Call |eval()| on the text the motion moves over and
                         |:copen|.
 
                                                 *scriptease-:Time*
-:Time {command}         Run the given command and report how long it takes.
+:[count]Time {command}  Run the given command [count] times (default: 1) and
+                        report how long it takes.
 
                                                 *scriptease-:Verbose*
 :[count]Verbose {command}

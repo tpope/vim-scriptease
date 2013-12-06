@@ -609,12 +609,20 @@ command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vread
 " }}}1
 " :Time {{{1
 
-command! -nargs=? -complete=command Time :exe s:time(<q-args>)
+command! -count=1 -nargs=? -complete=command Time :exe s:time(<q-args>, <count>)
 
-function! s:time(cmd)
+function! s:time(cmd, count)
   let time = reltime()
   try
-    execute a:cmd
+    if a:count > 1
+      let i = 0
+      while i < a:count
+        execute a:cmd
+        let i += 1
+      endwhile
+    else
+      execute a:cmd
+    endif
   finally
     redraw
     echomsg matchstr(reltimestr(reltime(time)), '.*\..\{,3\}') . ' seconds to run :'.a:cmd
