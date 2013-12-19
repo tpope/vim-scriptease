@@ -10,6 +10,8 @@ I make so many Vim plugins I had to make a Vim plugin for making Vim plugins.
 * `:Disarm`: Remove a runtime file's maps, commands, and autocommands,
   effectively disabling it.
 * `:Scriptnames`: Load `:scriptnames` into the quickfix list.
+* `:Messages`: Load `:messages` into the quickfix list, with stack trace
+  parsing.
 * `:Verbose`: Capture the output of a `:verbose` invocation into the preview
   window.
 * `:Time`: Measure how long a command takes.

@@ -45,6 +45,12 @@ g!{motion}              Call |eval()| on the text the motion moves over and
                         an absolute (~/.vim/plugin/scriptease.vim) or
                         runtime-relative (plugin/scriptease.vim) path.
 
+                                                *scriptease-:Messages*
+:Messages               Capture the output of |:messages| and load it into the
+                        quickfix list.  Where possible, function name/line
+                        number combinations will be translated to the
+                        appropriate file name and line number.
+
                                                 *scriptease-:PP*
 :PP {expr}              Pretty print the value of {expr}.
 
