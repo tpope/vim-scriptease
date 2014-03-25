@@ -178,22 +178,28 @@ endfunction
 
 command! -bang -range=999998 -nargs=? -complete=expression PP
       \ if empty(<q-args>) |
-      \   while 1 |
-      \     let s:input = input('PP> ', '', 'expression') |
-      \     if empty(s:input) |
-      \       break |
-      \     endif |
-      \     echon "\n" |
-      \     let v:errmsg = '' |
-      \     try |
-      \       call s:dump(<bang>0, 999998, eval(s:input)) |
-      \     catch |
-      \       echohl ErrorMsg |
-      \       echo v:exception |
-      \       echo v:throwpoint |
-      \       echohl NONE |
-      \     endtry |
-      \   endwhile |
+      \   let s:more = &more |
+      \   try |
+      \     set nomore |
+      \     while 1 |
+      \       let s:input = input('PP> ', '', 'expression') |
+      \       if empty(s:input) |
+      \         break |
+      \       endif |
+      \       echon "\n" |
+      \       let v:errmsg = '' |
+      \       try |
+      \         call s:dump(<bang>0, 999998, eval(s:input)) |
+      \       catch |
+      \         echohl ErrorMsg |
+      \         echo v:exception |
+      \         echo v:throwpoint |
+      \         echohl NONE |
+      \       endtry |
+      \     endwhile |
+      \ finally |
+      \   let &more = s:more |
+      \ endtry |
       \ else |
       \   let v:errmsg = '' |
       \   call s:dump(<bang>0, <count>, eval(<q-args>)) |
