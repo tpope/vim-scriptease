@@ -52,6 +52,11 @@ g!{motion}              Call |eval()| on the text the motion moves over and
 
 :{range}PP[!] {expr}    Pretty print the value of {expr} into the buffer after
                         {range}.
+
+:PP                     With no {expr}, input, evaluate, and pretty print a
+                        series of expressions.  Quit on a blank line.  This is
+                        essentially a REPL.
+
                                                 *scriptease-:PPmsg*
 :PPmsg {expr}           Pretty print the value of {expr} using |:echomsg|.
 
@@ -61,6 +66,9 @@ g!{motion}              Call |eval()| on the text the motion moves over and
 :{count}PPmsg[!] {expr} Pretty print the value of {expr} using |:echomsg| if
                         and only if the value of 'verbose' is greater than or
                         equal to {count}.
+
+:PPmsg                  With no {expr}, |:echomsg| the current |<sfile>| and
+                        |<slnum>|.
                                                 *scriptease-:Runtime*
 :Runtime {file} ..      Invokes |:runtime|! on the given files, after
                         |:unlet|ting any include guards found within them.
