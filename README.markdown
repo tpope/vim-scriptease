@@ -1,6 +1,6 @@
 # scriptease.vim
 
-Enjoy this amalgamation of crap I use for editing runtime files.
+I make so many Vim plugins I had to make a Vim plugin for making Vim plugins.
 
 ## Features
 
