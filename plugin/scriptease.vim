@@ -348,7 +348,7 @@ function! s:unlet_for(files) abort
   if empty(guards)
     return ''
   else
-    return 'unlet! '.join(guards, ' ')
+    return 'unlet! '.join(map(guards, '"g:".v:val'), ' ')
   endif
 endfunction
 
