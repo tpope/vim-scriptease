@@ -353,7 +353,7 @@ function! s:unlet_for(files) abort
 endfunction
 
 function! s:lencompare(a, b)
-  return len(a:b) - len(a:b)
+  return len(a:a) - len(a:b)
 endfunction
 
 function! s:findinrtp(path)
