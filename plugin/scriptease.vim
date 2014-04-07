@@ -381,7 +381,7 @@ function! s:runtime(bang, ...) abort
     if empty(files[0])
       let files = ['%']
     endif
-    if &modified
+    if &modified && &autowrite
       let predo = 'silent write|'
     endif
   else
@@ -732,6 +732,7 @@ endfunction
 
 function! s:setup() abort
   setlocal suffixesadd=.vim keywordprg=:help
+  let b:dispatch = ':Runtime'
 endfunction
 
 augroup scriptease
