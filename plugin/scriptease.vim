@@ -733,11 +733,13 @@ endfunction
 function! s:setup() abort
   setlocal suffixesadd=.vim keywordprg=:help
   let b:dispatch = ':Runtime'
+  command! -bar -bang -buffer Console Runtime|PP
 endfunction
 
 augroup scriptease
   autocmd!
   autocmd FileType vim,help let &l:path = escape(&runtimepath, ' ')
+  autocmd FileType help command! -bar -bang -buffer Console PP
   autocmd FileType vim call s:setup()
   " Recent versions of vim.vim set iskeyword to include ":", which breaks among
   " other things tags. :(
