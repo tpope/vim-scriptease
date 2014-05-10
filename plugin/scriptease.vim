@@ -381,8 +381,8 @@ function! s:runtime(bang, ...) abort
     if empty(files[0])
       let files = ['%']
     endif
-    if &modified && &autowrite
-      let predo = 'silent write|'
+    if &modified && (&autowrite || &autowriteall)
+      let predo = 'silent wall|'
     endif
   else
     for ft in split(&filetype, '\.')
