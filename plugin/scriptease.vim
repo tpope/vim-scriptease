@@ -746,12 +746,13 @@ augroup scriptease
 augroup END
 
 " }}}1
-" Projectile {{{1
+" Projectionist {{{1
 
-function! s:projectile_detect() abort
-  let path = s:sub(s:findinrtp(g:projectile_file)[0], '[\/]after$', '')
+function! s:projectionist_detect() abort
+  let file = get(g:, 'projectionist_file', '')
+  let path = s:sub(s:findinrtp(file)[0], '[\/]after$', '')
   if !empty(path)
-    call projectile#append(path, {
+    call projectionist#append(path, {
           \ "plugin/*.vim":   {"command": "plugin", "alternate": "autoload/{}.vim"},
           \ "autoload/*.vim": {"command": "autoload", "alternate": "plugin/{}.vim"},
           \ "compiler/*.vim": {"command": "compiler"},
@@ -764,9 +765,9 @@ function! s:projectile_detect() abort
   endif
 endfunction
 
-augroup scriptease_projectile
+augroup scriptease_projectionist
   autocmd!
-  autocmd User ProjectileDetect call s:projectile_detect()
+  autocmd User ProjectionistDetect call s:projectionist_detect()
 augroup END
 
 " }}}1
