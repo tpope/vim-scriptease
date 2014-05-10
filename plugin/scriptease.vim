@@ -754,7 +754,10 @@ function! s:projectionist_detect() abort
   let file = get(g:, 'projectionist_file', '')
   let path = s:sub(s:findinrtp(file)[0], '[\/]after$', '')
   if !empty(path)
+    let reload = ":Runtime ./{open}autoload,plugin{close}/**/*.vim"
     call projectionist#append(path, {
+          \ "*": {"start": reload},
+          \ "*.vim": {"start": reload},
           \ "plugin/*.vim":   {"command": "plugin", "alternate": "autoload/{}.vim"},
           \ "autoload/*.vim": {"command": "autoload", "alternate": "plugin/{}.vim"},
           \ "compiler/*.vim": {"command": "compiler"},
@@ -763,7 +766,7 @@ function! s:projectionist_detect() abort
           \ "ftplugin/*.vim": {"command": "ftplugin", "alternate": ["indent/{}.vim", "syntax/{}.vim"]},
           \ "indent/*.vim":   {"command": "indent", "alternate": ["syntax/{}.vim", "ftplugin/{}.vim"]},
           \ "after/*.vim":    {"command": "after"},
-          \ "doc/*.txt":      {"command": "doc"}})
+          \ "doc/*.txt":      {"command": "doc", "start": reload}})
   endif
 endfunction
 
