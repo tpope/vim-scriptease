@@ -91,7 +91,7 @@ g!{motion}              Call |eval()| on the text the motion moves over and
 :[count]Verbose {command}
                         Like |:verbose|, but capture the results to a file
                         with 'verbosefile' and load it in the preview window.
-                        This is particularly useful for higher, noiser values
+                        This is particularly useful for higher, noisier values
                         of [count].
 
                                         *scriptease-:Vedit* *scriptease-:Ve*
