@@ -23,7 +23,7 @@ I make so many Vim plugins I had to make a Vim plugin for making Vim plugins.
 * `g!`: Eval a motion or selection as VimL and replace it with the result.
   This is handy for doing math, even outside of VimL.  It's so handy, in fact,
   that it probably deserves its own plugin.
-* Projections for [projectile.vim](https://github.com/tpope/vim-projectile).
+* Projections for [projectionist.vim](https://github.com/tpope/vim-projectionist).
 
 See the `:help` for details.
 
