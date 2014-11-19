@@ -48,38 +48,6 @@ function! s:shellslash(path) abort
 endfunction
 
 " }}}1
-" Completion {{{1
-
-function! s:Complete(A,L,P)
-  let sep = !exists("+shellslash") || &shellslash ? '/' : '\'
-  let cheats = {
-        \ 'a': 'autoload',
-        \ 'd': 'doc',
-        \ 'f': 'ftplugin',
-        \ 'i': 'indent',
-        \ 'p': 'plugin',
-        \ 's': 'syntax'}
-  if a:A =~# '^\w[\\/]' && has_key(cheats,a:A[0])
-    let request = cheats[a:A[0]].a:A[1:-1]
-  else
-    let request = a:A
-  endif
-  let pattern = substitute(request,'/\|\'.sep,'*'.sep,'g').'*'
-  let found = {}
-  for glob in split(&runtimepath, ',')
-    for path in map(split(glob(glob), "\n"), 'fnamemodify(v:val, ":p")')
-      let matches = split(glob(path.sep.pattern),"\n")
-      call map(matches,'isdirectory(v:val) ? v:val.sep : v:val')
-      call map(matches,'fnamemodify(v:val, ":p")[strlen(path)+1:-1]')
-      for match in matches
-        let found[match] = 1
-      endfor
-    endfor
-  endfor
-  return sort(keys(found))
-endfunction
-
-" }}}1
 " :PP, :PPmsg {{{1
 
 let s:escapes = {
@@ -422,7 +390,7 @@ function! s:runtime(bang, ...) abort
   return predo.run
 endfunction
 
-command! -bang -bar -nargs=* -complete=customlist,s:Complete Runtime
+command! -bang -bar -nargs=* -complete=customlist,scriptease#complete Runtime
       \ :exe s:runtime('<bang>', <f-args>)
 
 " }}}1
@@ -494,7 +462,7 @@ function! s:disarm(...) abort
   return join(filter(unlets, 'v:val !=# ""'), '|')
 endfunction
 
-command! -bang -bar -nargs=* -complete=customlist,s:Complete Disarm
+command! -bang -bar -nargs=* -complete=customlist,scriptease#complete Disarm
       \ :exe s:disarm(<f-args>)
 
 " }}}1
@@ -503,10 +471,10 @@ command! -bang -bar -nargs=* -complete=customlist,s:Complete Disarm
 augroup scriptease_breakadd
   autocmd!
   autocmd FileType vim command!
-        \   -buffer -bar -nargs=? -complete=custom,s:Complete_breakadd Breakadd
+        \   -buffer -bar -nargs=? -complete=custom,scriptease#complete_breakadd Breakadd
         \ :exe s:break('add',<q-args>)
   autocmd FileType vim command!
-        \   -buffer -bar -nargs=? -complete=custom,s:Complete_breakdel Breakdel
+        \   -buffer -bar -nargs=? -complete=custom,scriptease#complete_breakdel Breakdel
         \ :exe s:break('del',<q-args>)
 augroup END
 
@@ -543,38 +511,6 @@ function! s:break(type, arg) abort
   return 'break'.a:type.' '.s:breaksnr(a:arg)
 endfunction
 
-function! s:Complete_breakadd(A, L, P)
-  let functions = join(sort(map(split(scriptease#capture('function'), "\n"), 'matchstr(v:val, " \\zs[^(]*")')), "\n")
-  if a:L =~# '^\w\+\s\+\w*$'
-    return "here\nfile\nfunc"
-  elseif a:L =~# '^\w\+\s\+func\s*\d*\s\+s:'
-    let id = scriptease#scriptid('%')
-    return s:gsub(functions,'\<SNR\>'.id.'_', 's:')
-  elseif a:L =~# '^\w\+\s\+func '
-    return functions
-  elseif a:L =~# '^\w\+\s\+file '
-    return glob(a:A."*")
-  else
-    return ''
-  endif
-endfunction
-
-function! s:Complete_breakdel(A, L, P)
-  let args = matchstr(a:L, '\s\zs\S.*')
-  let list = split(scriptease#capture('breaklist'), "\n")
-  call map(list, 's:sub(v:val, ''^\s*\d+\s*(\w+) (.*)  line (\d+)$'', ''\1 \3 \2'')')
-  if a:L =~# '^\w\+\s\+\w*$'
-    return "*\nhere\nfile\nfunc"
-  elseif a:L =~# '^\w\+\s\+func\s'
-    return join(map(filter(list, 'v:val =~# "^func"'), 'v:val[5 : -1]'), "\n")
-  elseif a:L =~# '^\w\+\s\+file\s'
-    return join(map(filter(list, 'v:val =~# "^file"'), 'v:val[5 : -1]'), "\n")
-  else
-    return ''
-  endif
-endfunction
-
-" }}}1
 " :Vopen, :Vedit, ... {{{1
 
 function! s:previewwindow()
@@ -621,21 +557,21 @@ function! s:find(count,cmd,file,lcd)
   endif
 endfunction
 
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Ve
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Ve
       \ :execute s:find(<count>,'edit<bang>',<q-args>,0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vedit
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vedit
       \ :execute s:find(<count>,'edit<bang>',<q-args>,0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vopen
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vopen
       \ :execute s:find(<count>,'edit<bang>',<q-args>,1)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vsplit
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vsplit
       \ :execute s:find(<count>,'split',<q-args>,<bang>0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vvsplit
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vvsplit
       \ :execute s:find(<count>,'vsplit',<q-args>,<bang>0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vtabedit
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vtabedit
       \ :execute s:find(<count>,'tabedit',<q-args>,<bang>0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vpedit
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vpedit
       \ :execute s:find(<count>,'pedit<bang>',<q-args>,0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vread
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vread
       \ :execute s:find(<count>,'read',<q-args>,<bang>0)
 
 " }}}1
