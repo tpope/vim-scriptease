@@ -337,12 +337,14 @@ function! s:unlet_for(files) abort
   for file in a:files
     if filereadable(file)
       let lines = readfile(file)
-      for i in range(len(lines)-1)
-        let unlet = matchstr(lines[i], '^if exists([''"]\%(\g:\)\=\zs\w\+\ze[''"]')
-        if unlet !=# '' && lines[i+1] =~# '^ *finish\>' && index(guards, unlet) == -1
-          call extend(guards, [unlet])
-        endif
-      endfor
+      if len(lines)
+        for i in range(len(lines)-1)
+          let unlet = matchstr(lines[i], '^if exists([''"]\%(\g:\)\=\zs\w\+\ze[''"]')
+          if unlet !=# '' && lines[i+1] =~# '^ *finish\>' && index(guards, unlet) == -1
+            call extend(guards, [unlet])
+          endif
+        endfor
+      endif
     endif
   endfor
   if empty(guards)
