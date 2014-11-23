@@ -727,6 +727,12 @@ function! s:helptopic()
   endif
 endfunction
 
+function! s:build_path()
+  let old_path = substitute(&path, '\v^\.,/%(usr|emx)/include,,,?', '', '')
+  let new_path = escape(&runtimepath, ' ')
+  return !empty(old_path) ? old_path.','.new_path : new_path
+endfunction
+
 " }}}1
 " Settings {{{1
 
@@ -738,7 +744,7 @@ endfunction
 
 augroup scriptease
   autocmd!
-  autocmd FileType vim,help let &l:path = escape(&runtimepath, ' ')
+  autocmd FileType vim,help let &l:path = s:build_path()
   autocmd FileType help command! -bar -bang -buffer Console PP
   autocmd FileType vim call s:setup()
   " Recent versions of vim.vim set iskeyword to include ":", which breaks among
