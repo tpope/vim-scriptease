@@ -336,7 +336,7 @@ function! s:unlet_for(files) abort
   let guards = []
   for file in a:files
     if filereadable(file)
-      let lines = readfile(file)
+      let lines = readfile(file, '', 500)
       if len(lines)
         for i in range(len(lines)-1)
           let unlet = matchstr(lines[i], '^if .*\<exists *( *[''"]\%(\g:\)\=\zs\w\+\ze[''"]')
