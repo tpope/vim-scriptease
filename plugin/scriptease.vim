@@ -406,7 +406,7 @@ function! s:runtime(bang, ...) abort
     if request =~# '^\.\=[\\/]\|^\w:[\\/]\|^[%#~]\|^\d\+$'
       let request = scriptease#scriptname(request)
       let unlets += split(glob(request), "\n")
-      let do += ['source '.escape(request, " \t|!")]
+      let do += map(copy(unlets), '"source ".escape(v:val, " \t|!")')
     else
       if get(do, 0, [''])[0] !~# '^runtime!'
         let do += ['runtime!']
