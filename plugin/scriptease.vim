@@ -730,8 +730,8 @@ function! s:helptopic()
   endif
 endfunction
 
-function! s:build_path()
-  let old_path = substitute(&path, '\v^\.,/%(usr|emx)/include,,,?', '', '')
+function! s:build_path() abort
+  let old_path = substitute(&g:path, '\v^\.,/%(usr|emx)/include,,,?', '', '')
   let new_path = escape(&runtimepath, ' ')
   return !empty(old_path) ? old_path.','.new_path : new_path
 endfunction
