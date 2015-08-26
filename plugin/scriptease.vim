@@ -695,9 +695,13 @@ nmap zS <Plug>ScripteaseSynnames
 " }}}1
 " K {{{1
 
+nnoremap <silent> <Plug>ScripteaseHelp :<C-U>exe 'help '.<SID>helptopic()<CR>
 augroup scriptease_help
   autocmd!
-  autocmd FileType vim nnoremap <silent><buffer> K :exe 'help '.<SID>helptopic()<CR>
+  autocmd FileType vim
+        \  if empty(mapcheck('K', 'n'))
+        \| nmap <silent><buffer> K <Plug>ScripteaseHelp
+        \| endif
 augroup END
 
 function! s:helptopic()
