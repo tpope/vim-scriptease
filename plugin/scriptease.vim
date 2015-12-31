@@ -340,9 +340,13 @@ function! s:unlet_for(files) abort
       if len(lines)
         for i in range(len(lines)-1)
           let unlet = matchstr(lines[i], '^if .*\<exists *( *[''"]\%(\g:\)\=\zs\w\+\ze[''"]')
-          if unlet !=# '' && (lines[i+1] =~# '^ *finish\>' || lines[i] =~# '| *finish\>')
-                \ && index(guards, unlet) == -1
-            call extend(guards, [unlet])
+          if unlet !=# '' && index(guards, unlet) == -1
+            for j in range(0, 4)
+              if lines[i+j] =~# '^\s*finish\>'
+                call extend(guards, [unlet])
+                break
+              endif
+            endfor
           endif
         endfor
       endif
