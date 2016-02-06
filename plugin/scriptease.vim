@@ -797,7 +797,7 @@ endfunction
 
 let s:sign_name = 'scriptease_break'
 " ID number of the next sign to place
-let s:next_sign_id = 17607
+let s:sign_id = 17607
 execute 'sign define ' . s:sign_name . ' texthl=ErrorMsg text=>>'
 
 function! s:show_breakpoint_signs()
@@ -842,7 +842,7 @@ function! s:show_breakpoint_signs()
         endif
       endif
     endif
-    s:next_sign_id += 1
+    let s:sign_id += 1
   endfor
 endfunction
 
