@@ -507,10 +507,10 @@ augroup scriptease_breakadd
   autocmd!
   autocmd FileType vim command!
         \   -buffer -bar -nargs=? -complete=custom,s:Complete_breakadd Breakadd
-        \ :exe s:break('add',<q-args>)
+        \ :exe s:break('add',<q-args>) | :exe s:show_breakpoint_signs()
   autocmd FileType vim command!
         \   -buffer -bar -nargs=? -complete=custom,s:Complete_breakdel Breakdel
-        \ :exe s:break('del',<q-args>)
+        \ :exe s:break('del',<q-args>) | :exe s:show_breakpoint_signs()
 augroup END
 
 function! s:breaksnr(arg) abort
@@ -785,5 +785,67 @@ augroup scriptease_projectionist
 augroup END
 
 " }}}1
+
+function! s:to_function_name(symbol)
+  let result = matchstr(a:symbol, '^.*<SNR>\d\+_\zs.*\ze$')
+  return empty(result) ? a:symbol : result
+endfunction
+
+function! s:to_SID(symbol)
+  return matchstr(a:symbol, '^.*<SNR>\zs\d\+\ze_.*$')
+endfunction
+
+let s:sign_name = 'scriptease_break'
+" ID number of the next sign to place
+let s:next_sign_id = 17607
+execute 'sign define ' . s:sign_name . ' texthl=ErrorMsg text=>>'
+
+function! s:show_breakpoint_signs()
+  sign unplace *
+  " get output of :breaklist
+  redir => result
+  silent execute 'breaklist'
+  redir END
+  if result =~# 'No breakpoints defined'
+    return
+  endif
+  " make breakpoint list
+  let l:blist = []
+  for bstr in split(result, '\n')
+    let bcols = split(bstr)
+    let bentry = { 'type' : bcols[1], 'line' : bcols[4] }
+    if bentry['type'] ==# 'file'
+      " set fullpath of the file
+      let bentry['file'] = expand(bcols[2])
+    elseif bentry['type'] ==# 'func'
+      " set SID and function name
+      let bentry['func'] = { 'SID': s:to_SID(bcols[2]), 'name': s:to_function_name(bcols[2]) }
+    endif
+    call add(l:blist, l:bentry)
+  endfor
+  PPmsg l:blist
+  for be in l:blist
+    if be['type'] ==# 'file'
+      " place sign to the file
+      execute 'sign place ' . s:sign_id . ' line=' . be['line'] . ' name=' . s:sign_name . ' file=' . be['file']
+      PPmsg 'sign place ' . s:sign_id . ' line=' . be['line'] . ' name=' . s:sign_name . ' file=' . be['file']
+    elseif be['type'] ==# 'func'
+      if be['func']['SID'] !=# scriptease#scriptid('%')
+        " the script-local function is not of this file
+        continue
+      else
+        " if the function definition found, place sign.
+        let l:lnum = search('\v^fu.*%(<s:|\<SID\>)' . be['func']['name'], 'n')
+        if l:lnum != 0
+          execute 'sign place ' . s:sign_id . ' line=' . (l:lnum + be['line']) . ' name=' . s:sign_name . ' file=' . expand('%:p')
+          PPmsg 'sign place ' . s:sign_id . ' line=' . l:lnum + be['line'] . ' name=' . s:sign_name . ' file=' . expand('%:p')
+        endif
+      endif
+    endif
+    s:next_sign_id += 1
+  endfor
+endfunction
+
+autocmd BufEnter * call <SID>show_breakpoint_signs()
 
 " vim:set et sw=2:
