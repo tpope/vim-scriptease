@@ -507,10 +507,10 @@ augroup scriptease_breakadd
   autocmd!
   autocmd FileType vim command!
         \   -buffer -bar -nargs=? -complete=custom,s:Complete_breakadd Breakadd
-        \ :exe s:break('add',<q-args>) | :exe s:show_breakpoint_signs()
+        \ :exe s:break('add',<q-args>) | :call s:show_breakpoint_signs()
   autocmd FileType vim command!
         \   -buffer -bar -nargs=? -complete=custom,s:Complete_breakdel Breakdel
-        \ :exe s:break('del',<q-args>) | :exe s:show_breakpoint_signs()
+        \ :exe s:break('del',<q-args>) | :call s:show_breakpoint_signs()
 augroup END
 
 function! s:breaksnr(arg) abort
@@ -823,22 +823,31 @@ function! s:show_breakpoint_signs()
     endif
     call add(l:blist, l:bentry)
   endfor
-  PPmsg l:blist
+  " PPmsg l:blist
   for be in l:blist
     if be['type'] ==# 'file'
       " place sign to the file
       execute 'sign place ' . s:sign_id . ' line=' . be['line'] . ' name=' . s:sign_name . ' file=' . be['file']
-      PPmsg 'sign place ' . s:sign_id . ' line=' . be['line'] . ' name=' . s:sign_name . ' file=' . be['file']
+      " PPmsg 'sign place ' . s:sign_id . ' line=' . be['line'] . ' name=' . s:sign_name . ' file=' . be['file']
     elseif be['type'] ==# 'func'
-      if be['func']['SID'] !=# scriptease#scriptid('%')
+      if empty(be['func']['SID'])
+        " search global function and place sign
+        " PPmsg '\v^\s*fu%[nction]>.*' . be['func']['name']
+        let l:lnum = search('\v^\s*fu%[nction]>.*' . be['func']['name'], 'n')
+        if l:lnum != 0
+          execute 'sign place ' . s:sign_id . ' line=' . (l:lnum + be['line']) . ' name=' . s:sign_name . ' file=' . expand('%:p')
+          " PPmsg 'sign place ' . s:sign_id . ' line=' . l:lnum + be['line'] . ' name=' . s:sign_name . ' file=' . expand('%:p')
+        endif
+      elseif be['func']['SID'] !=# scriptease#scriptid('%')
         " the script-local function is not of this file
         continue
       else
-        " if the function definition found, place sign.
-        let l:lnum = search('\v^fu.*%(<s:|\<SID\>)' . be['func']['name'], 'n')
+        " search script-local function and place sign
+        " PPmsg '\v^\s*fu%[nction]>.*<(s:|\<SID\>).*' . be['func']['name']
+        let l:lnum = search('\v^\s*fu%[nction]>.*<(s:|\<SID\>).*' . be['func']['name'], 'n')
         if l:lnum != 0
           execute 'sign place ' . s:sign_id . ' line=' . (l:lnum + be['line']) . ' name=' . s:sign_name . ' file=' . expand('%:p')
-          PPmsg 'sign place ' . s:sign_id . ' line=' . l:lnum + be['line'] . ' name=' . s:sign_name . ' file=' . expand('%:p')
+          " PPmsg 'sign place ' . s:sign_id . ' line=' . l:lnum + be['line'] . ' name=' . s:sign_name . ' file=' . expand('%:p')
         endif
       endif
     endif
@@ -846,6 +855,6 @@ function! s:show_breakpoint_signs()
   endfor
 endfunction
 
-autocmd BufEnter * call <SID>show_breakpoint_signs()
+autocmd BufEnter vim call s:show_breakpoint_signs()
 
 " vim:set et sw=2:
