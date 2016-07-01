@@ -339,7 +339,7 @@ function! s:unlet_for(files) abort
       let lines = readfile(file, '', 500)
       if len(lines)
         for i in range(len(lines)-1)
-          let unlet = matchstr(lines[i], '^if .*\<exists *( *[''"]\%(\g:\)\=\zs\w\+\ze[''"]')
+          let unlet = matchstr(lines[i], '^if .*\<exists *( *[''"]\%(\g:\)\=\zs[0-9A-Za-z_#]\+\ze[''"]')
           if unlet !=# '' && index(guards, unlet) == -1
             for j in range(0, 4)
               if lines[i+j] =~# '^\s*finish\>'
