@@ -701,7 +701,7 @@ nmap zS <Plug>ScripteaseSynnames
 
 augroup scriptease_help
   autocmd!
-  autocmd FileType vim nnoremap <silent><buffer> K :exe 'help '.<SID>helptopic()<CR>
+  autocmd FileType vim,help nnoremap <silent><buffer> K :exe 'help '.<SID>helptopic()<CR>
 augroup END
 
 function! s:helptopic()
