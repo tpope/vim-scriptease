@@ -248,7 +248,7 @@ function! s:filterop(type) abort
     let expr = s:opfunc(a:type)
     let @@ = matchstr(expr, '^\_s\+').scriptease#dump(eval(s:gsub(expr,'\n%(\s*\\)=',''))).matchstr(expr, '\_s\+$')
     if @@ !~# '^\n*$'
-      normal! gvp
+      normal! gv""p
     endif
   catch /^.*/
     echohl ErrorMSG
