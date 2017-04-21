@@ -50,7 +50,7 @@ endfunction
 " }}}1
 " Completion {{{1
 
-function! s:Complete(A,L,P)
+function! s:Complete(A,L,P) abort
   let sep = !exists("+shellslash") || &shellslash ? '/' : '\'
   let cheats = {
         \ 'a': 'autoload',
@@ -143,7 +143,7 @@ function! scriptease#dump(object, ...) abort
   return dump
 endfunction
 
-function! s:backslashdump(value, indent)
+function! s:backslashdump(value, indent) abort
     let out = scriptease#dump(a:value, {'level': 0, 'width': &textwidth - &shiftwidth * 3 - a:indent})
     return s:gsub(out, '\n', "\n".repeat(' ', a:indent + &shiftwidth * 3).'\\')
 endfunction
@@ -271,7 +271,7 @@ xmap g! <Plug>ScripteaseFilter
 command! -range=999998 -nargs=1 -complete=command Verbose
       \ :exe s:Verbose(<count> == 999998 ? '' : <count>, <q-args>)
 
-function! s:Verbose(level, excmd)
+function! s:Verbose(level, excmd) abort
   let temp = tempname()
   let verbosefile = &verbosefile
   call writefile([':'.a:level.'Verbose '.a:excmd], temp, 'b')
@@ -359,11 +359,11 @@ function! s:unlet_for(files) abort
   endif
 endfunction
 
-function! s:lencompare(a, b)
+function! s:lencompare(a, b) abort
   return len(a:a) - len(a:b)
 endfunction
 
-function! s:findinrtp(path)
+function! s:findinrtp(path) abort
   let path = fnamemodify(a:path, ':p')
   let candidates = []
   for glob in split(&runtimepath, ',')
@@ -437,7 +437,7 @@ command! -bang -bar -nargs=* -complete=customlist,s:Complete Runtime
 " }}}1
 " :Disarm {{{1
 
-function! scriptease#disarm(file)
+function! scriptease#disarm(file) abort
   let augroups = filter(readfile(a:file), 'v:val =~# "^\\s*aug\\%[roup]\\s"')
   call filter(augroups, 'v:val !~# "^\\s*aug\\%[roup]\\s\\+END"')
   for augroup in augroups
@@ -457,7 +457,7 @@ function! scriptease#disarm(file)
   return s:unlet_for([a:file])
 endfunction
 
-function! s:disable_maps_and_commands(file, buf)
+function! s:disable_maps_and_commands(file, buf) abort
   let last_set = "\tLast set from " . fnamemodify(a:file, ':~')
   for line in split(scriptease#capture('verbose command'), "\n")
     if line ==# last_set
@@ -552,7 +552,7 @@ function! s:break(type, arg) abort
   return 'break'.a:type.' '.s:breaksnr(a:arg)
 endfunction
 
-function! s:Complete_breakadd(A, L, P)
+function! s:Complete_breakadd(A, L, P) abort
   let functions = join(sort(map(split(scriptease#capture('function'), "\n"), 'matchstr(v:val, " \\zs[^(]*")')), "\n")
   if a:L =~# '^\w\+\s\+\w*$'
     return "here\nfile\nfunc"
@@ -568,7 +568,7 @@ function! s:Complete_breakadd(A, L, P)
   endif
 endfunction
 
-function! s:Complete_breakdel(A, L, P)
+function! s:Complete_breakdel(A, L, P) abort
   let args = matchstr(a:L, '\s\zs\S.*')
   let list = split(scriptease#capture('breaklist'), "\n")
   call map(list, 's:sub(v:val, ''^\s*\d+\s*(\w+) (.*)  line (\d+)$'', ''\1 \3 \2'')')
@@ -586,7 +586,7 @@ endfunction
 " }}}1
 " :Vopen, :Vedit, ... {{{1
 
-function! s:previewwindow()
+function! s:previewwindow() abort
   for i in range(1, winnr('$'))
     if getwinvar(i, '&previewwindow') == 1
       return i
@@ -595,11 +595,11 @@ function! s:previewwindow()
   return -1
 endfunction
 
-function! s:runtime_globpath(file)
+function! s:runtime_globpath(file) abort
   return split(globpath(escape(&runtimepath, ' '), a:file), "\n")
 endfunction
 
-function! s:find(count,cmd,file,lcd)
+function! s:find(count,cmd,file,lcd) abort
   let found = s:runtime_globpath(a:file)
   let file = get(found, a:count - 1, '')
   if file ==# ''
@@ -652,7 +652,7 @@ command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vread
 
 command! -count=1 -nargs=? -complete=command Time :exe s:time(<q-args>, <count>)
 
-function! s:time(cmd, count)
+function! s:time(cmd, count) abort
   let time = reltime()
   try
     if a:count > 1
@@ -683,7 +683,7 @@ function! scriptease#synnames(...) abort
   return reverse(map(synstack(line, col), 'synIDattr(v:val,"name")'))
 endfunction
 
-function! s:zS(count)
+function! s:zS(count) abort
   if a:count
     let name = get(scriptease#synnames(), a:count-1, '')
     if name !=# ''
