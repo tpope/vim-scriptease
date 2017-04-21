@@ -706,7 +706,7 @@ augroup scriptease_help
   autocmd FileType vim nnoremap <silent><buffer> K :exe 'help '.<SID>helptopic()<CR>
 augroup END
 
-function! s:helptopic()
+function! s:helptopic() abort
   let col = col('.') - 1
   while col && getline('.')[col] =~# '\k'
     let col -= 1
