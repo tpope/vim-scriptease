@@ -136,7 +136,7 @@ function! scriptease#dump(object, ...) abort
       let dump = s:sub("{".join(lines, "\n " . space), ',$', '}')
     endif
   elseif type(a:object) ==# type(function('tr'))
-    let dump = s:sub(string(a:object), '^function\(''(\d+)''\)$', 'function(''{\1}'')')
+    let dump = s:sub(s:sub(string(a:object), '^function\(''(\d+)''', 'function(''{\1}'''), ',.*\)$', ')')
   else
     let dump = string(a:object)
   endif
