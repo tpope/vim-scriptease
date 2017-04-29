@@ -297,7 +297,7 @@ function! scriptease#capture(excmd) abort
   return out
 endfunction
 
-function! s:names() abort
+function! scriptease#scriptnames_qflist() abort
   let names = scriptease#capture('scriptnames')
   let list = []
   for line in split(names, "\n")
@@ -326,7 +326,10 @@ function! scriptease#scriptid(filename) abort
   return ''
 endfunction
 
-command! -bar Scriptnames call setqflist(s:names())|copen
+command! -bar -count=0 Scriptnames
+      \ call setqflist(scriptease#scriptnames_qflist()) |
+      \ copen |
+      \ <count>
 
 " Section: :Messages
 
