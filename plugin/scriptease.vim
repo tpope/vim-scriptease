@@ -7,7 +7,7 @@ if exists('g:loaded_scriptease') || &cp
 endif
 let g:loaded_scriptease = 1
 
-" Utility {{{1
+" Section: Utility
 
 function! s:function(name) abort
   return function(substitute(a:name,'^s:',matchstr(expand('<sfile>'), '.*\zs<SNR>\d\+_'),''))
@@ -47,8 +47,7 @@ function! s:shellslash(path) abort
   endif
 endfunction
 
-" }}}1
-" Completion {{{1
+" Section: Completion
 
 function! s:Complete(A,L,P) abort
   let sep = !exists("+shellslash") || &shellslash ? '/' : '\'
@@ -79,8 +78,7 @@ function! s:Complete(A,L,P) abort
   return sort(keys(found))
 endfunction
 
-" }}}1
-" :PP, :PPmsg {{{1
+" Section: :PP, :PPmsg
 
 let s:escapes = {
       \ "\b": '\b',
@@ -213,8 +211,7 @@ command! -bang -range=0      -nargs=? -complete=expression PPmsg
       \  echomsg expand('<sfile>').', line '.expand('<slnum>') |
       \ endif
 
-" }}}1
-" g! {{{1
+" Section: g!
 
 function! s:opfunc(type) abort
   let sel_save = &selection
@@ -269,8 +266,7 @@ if empty(mapcheck('g!', 'x'))
   xmap g! <Plug>ScripteaseFilter
 endif
 
-" }}}1
-" :Verbose {{{1
+" Section: :Verbose
 
 command! -range=999998 -nargs=1 -complete=command Verbose
       \ :exe s:Verbose(<count> == 999998 ? '' : <count>, <q-args>)
@@ -289,8 +285,7 @@ function! s:Verbose(level, excmd) abort
         \ 'pedit '.temp.'|wincmd P|nnoremap <buffer> q :bd<CR>'
 endfunction
 
-" }}}1
-" :Scriptnames {{{1
+" Section: :Scriptnames
 
 function! scriptease#capture(excmd) abort
   try
@@ -333,8 +328,7 @@ endfunction
 
 command! -bar Scriptnames call setqflist(s:names())|copen
 
-" }}}1
-" :Messages {{{1
+" Section: :Messages
 
 command! -bar -bang Messages :execute s:Messages(<bang>0)
 
@@ -417,8 +411,7 @@ function! s:Messages(bang) abort
   return ''
 endfunction
 
-" }}}1
-" :Runtime {{{1
+" Section: :Runtime
 
 function! s:unlet_for(files) abort
   let guards = []
@@ -522,8 +515,7 @@ endfunction
 command! -bang -bar -nargs=* -complete=customlist,s:Complete Runtime
       \ :exe s:runtime('<bang>', <f-args>)
 
-" }}}1
-" :Disarm {{{1
+" Section: :Disarm
 
 function! scriptease#disarm(file) abort
   let augroups = filter(readfile(a:file), 'v:val =~# "^\\s*aug\\%[roup]\\s"')
@@ -594,8 +586,7 @@ endfunction
 command! -bang -bar -nargs=* -complete=customlist,s:Complete Disarm
       \ :exe s:disarm(<f-args>)
 
-" }}}1
-" :Breakadd, :Breakdel {{{1
+" Section: :Breakadd, :Breakdel
 
 augroup scriptease_breakadd
   autocmd!
@@ -671,8 +662,7 @@ function! s:Complete_breakdel(A, L, P) abort
   endif
 endfunction
 
-" }}}1
-" :Vopen, :Vedit, ... {{{1
+" Section: :Vopen, :Vedit, ...
 
 function! s:previewwindow() abort
   for i in range(1, winnr('$'))
@@ -735,8 +725,7 @@ command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vpedit
 command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vread
       \ :execute s:find(<count>,'read',<q-args>,<bang>0)
 
-" }}}1
-" :Time {{{1
+" Section: :Time
 
 command! -count=1 -nargs=? -complete=command Time :exe s:time(<q-args>, <count>)
 
@@ -759,8 +748,7 @@ function! s:time(cmd, count) abort
   return ''
 endfunction
 
-" }}}1
-" zS {{{1
+" Section: zS
 
 function! scriptease#synnames(...) abort
   if a:0
@@ -788,8 +776,7 @@ if empty(mapcheck('zS', 'n'))
   nmap zS <Plug>ScripteaseSynnames
 endif
 
-" }}}1
-" K {{{1
+" Section: K
 
 nnoremap <silent> <Plug>ScripteaseHelp :<C-U>exe 'help '.<SID>helptopic()<CR>
 augroup scriptease_help
@@ -830,8 +817,7 @@ function! s:helptopic() abort
   endif
 endfunction
 
-" }}}1
-" Settings {{{1
+" Section: Settings
 
 function! s:build_path() abort
   let old_path = substitute(&g:path, '\v^\.,/%(usr|emx)/include,,,?', '', '')
@@ -878,8 +864,7 @@ augroup scriptease
   autocmd Syntax vim setlocal iskeyword-=:
 augroup END
 
-" }}}1
-" Projectionist {{{1
+" Section: Projectionist
 
 function! s:projectionist_detect() abort
   let file = get(g:, 'projectionist_file', '')
@@ -905,7 +890,5 @@ augroup scriptease_projectionist
   autocmd!
   autocmd User ProjectionistDetect call s:projectionist_detect()
 augroup END
-
-" }}}1
 
 " vim:set et sw=2:
