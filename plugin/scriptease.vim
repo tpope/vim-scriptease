@@ -261,9 +261,13 @@ endfunction
 
 nnoremap <silent> <Plug>ScripteaseFilter :<C-U>set opfunc=<SID>filterop<CR>g@
 xnoremap <silent> <Plug>ScripteaseFilter :<C-U>call <SID>filterop(visualmode())<CR>
-nmap g! <Plug>ScripteaseFilter
-nmap g!! <Plug>ScripteaseFilter_
-xmap g! <Plug>ScripteaseFilter
+if empty(mapcheck('g!', 'n'))
+  nmap g! <Plug>ScripteaseFilter
+  nmap g!! <Plug>ScripteaseFilter_
+endif
+if empty(mapcheck('g!', 'x'))
+  xmap g! <Plug>ScripteaseFilter
+endif
 
 " }}}1
 " :Verbose {{{1
@@ -696,7 +700,9 @@ function! s:zS(count) abort
 endfunction
 
 nnoremap <silent> <Plug>ScripteaseSynnames :<C-U>exe <SID>zS(v:count)<CR>
-nmap zS <Plug>ScripteaseSynnames
+if empty(mapcheck('zS', 'n'))
+  nmap zS <Plug>ScripteaseSynnames
+endif
 
 " }}}1
 " K {{{1
