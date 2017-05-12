@@ -6,7 +6,7 @@ I make so many Vim plugins I had to make a Vim plugin for making Vim plugins.
 
 * `:PP`: Pretty print.  With no argument, acts as a REPL.
 * `:Runtime`: Reload runtime files.  Like `:runtime!`, but it unlets any
-  include guards first.
+  include guards first. Can be configured to run upon saving Vim scripts.
 * `:Disarm`: Remove a runtime file's maps, commands, and autocommands,
   effectively disabling it.
 * `:Scriptnames`: Load `:scriptnames` into the quickfix list.
