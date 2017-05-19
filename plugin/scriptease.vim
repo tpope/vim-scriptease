@@ -426,7 +426,7 @@ function! s:unlet_for(files) abort
           let unlet = matchstr(lines[i], '^if .*\<exists *( *[''"]\%(\g:\)\=\zs[0-9A-Za-z_#]\+\ze[''"]')
           if unlet !=# '' && index(guards, unlet) == -1
             for j in range(0, 4)
-              if lines[i+j] =~# '^\s*finish\>'
+              if get(lines, i+j, '') =~# '^\s*finish\>'
                 call extend(guards, [unlet])
                 break
               endif
