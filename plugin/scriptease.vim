@@ -49,7 +49,7 @@ endfunction
 
 " Section: Completion
 
-function! s:Complete(A,L,P) abort
+function! scriptease#complete(A,L,P) abort
   let sep = !exists("+shellslash") || &shellslash ? '/' : '\'
   let cheats = {
         \ 'a': 'autoload',
@@ -146,7 +146,7 @@ function! s:backslashdump(value, indent) abort
     return s:gsub(out, '\n', "\n".repeat(' ', a:indent + &shiftwidth * 3).'\\')
 endfunction
 
-function! s:dump(bang, lnum, value) abort
+function! scriptease#pp_command(bang, lnum, value) abort
   if v:errmsg !=# ''
     return
   elseif a:lnum == 999998
@@ -164,7 +164,7 @@ function! s:dump(bang, lnum, value) abort
   endif
 endfunction
 
-function! s:dumpmsg(bang, count, value) abort
+function! scriptease#ppmsg_command(bang, count, value) abort
   if v:errmsg !=# ''
     return
   elseif &verbose >= a:count
@@ -187,7 +187,7 @@ command! -bang -range=999998 -nargs=? -complete=expression PP
       \       echon "\n" |
       \       let v:errmsg = '' |
       \       try |
-      \         call s:dump(<bang>0, 999998, eval(s:input)) |
+      \         call scriptease#pp_command(<bang>0, 999998, eval(s:input)) |
       \       catch |
       \         echohl ErrorMsg |
       \         echo v:exception |
@@ -200,13 +200,13 @@ command! -bang -range=999998 -nargs=? -complete=expression PP
       \ endtry |
       \ else |
       \   let v:errmsg = '' |
-      \   call s:dump(<bang>0, <count>, eval(<q-args>)) |
+      \   call scriptease#pp_command(<bang>0, <count>, eval(<q-args>)) |
       \ endif
 
 command! -bang -range=0      -nargs=? -complete=expression PPmsg
       \ if !empty(<q-args>) |
       \   let v:errmsg = '' |
-      \   call s:dumpmsg(<bang>0, <count>, empty(<q-args>) ? expand('<sfile>') : eval(<q-args>)) |
+      \   call scriptease#ppmsg_command(<bang>0, <count>, empty(<q-args>) ? expand('<sfile>') : eval(<q-args>)) |
       \ elseif &verbose >= <count> && !empty(expand('<sfile>')) |
       \  echomsg expand('<sfile>').', line '.expand('<slnum>') |
       \ endif
@@ -239,7 +239,7 @@ function! s:opfunc(type) abort
   endtry
 endfunction
 
-function! s:filterop(type) abort
+function! scriptease#filterop(type) abort
   let reg_save = @@
   try
     let expr = s:opfunc(a:type)
@@ -256,8 +256,8 @@ function! s:filterop(type) abort
   endtry
 endfunction
 
-nnoremap <silent> <Plug>ScripteaseFilter :<C-U>set opfunc=<SID>filterop<CR>g@
-xnoremap <silent> <Plug>ScripteaseFilter :<C-U>call <SID>filterop(visualmode())<CR>
+nnoremap <silent> <Plug>ScripteaseFilter :<C-U>set opfunc=scriptease#filterop<CR>g@
+xnoremap <silent> <Plug>ScripteaseFilter :<C-U>call scriptease#filterop(visualmode())<CR>
 if empty(mapcheck('g!', 'n'))
   nmap g! <Plug>ScripteaseFilter
   nmap g!! <Plug>ScripteaseFilter_
@@ -269,9 +269,9 @@ endif
 " Section: :Verbose
 
 command! -range=999998 -nargs=1 -complete=command Verbose
-      \ :exe s:Verbose(<count> == 999998 ? '' : <count>, <q-args>)
+      \ :exe scriptease#verbose_command(<count> == 999998 ? '' : <count>, <q-args>)
 
-function! s:Verbose(level, excmd) abort
+function! scriptease#verbose_command(level, excmd) abort
   let temp = tempname()
   let verbosefile = &verbosefile
   call writefile([':'.a:level.'Verbose '.a:excmd], temp, 'b')
@@ -333,9 +333,9 @@ command! -bar -count=0 Scriptnames
 
 " Section: :Messages
 
-command! -bar -bang Messages :execute s:Messages(<bang>0)
+command! -bar -bang Messages :execute scriptease#messages_command(<bang>0)
 
-function! s:Messages(bang) abort
+function! scriptease#messages_command(bang) abort
   let qf = []
   for line in split(scriptease#capture('messages'), '\n\+')
     let lnum = matchstr(line, '\C^line\s\+\zs\d\+\ze:$')
@@ -460,7 +460,7 @@ function! s:findinrtp(path) abort
   return [preferred, path[strlen(preferred)+1 : -1]]
 endfunction
 
-function! s:runtime(bang, ...) abort
+function! scriptease#runtime_command(bang, ...) abort
   let unlets = []
   let do = []
   let predo = ''
@@ -515,8 +515,8 @@ function! s:runtime(bang, ...) abort
   return predo.run
 endfunction
 
-command! -bang -bar -nargs=* -complete=customlist,s:Complete Runtime
-      \ :exe s:runtime('<bang>', <f-args>)
+command! -bang -bar -nargs=* -complete=customlist,scriptease#complete Runtime
+      \ :exe scriptease#runtime_command('<bang>', <f-args>)
 
 " Section: :Disarm
 
@@ -565,7 +565,7 @@ function! s:disable_maps_and_commands(file, buf) abort
   endfor
 endfunction
 
-function! s:disarm(...) abort
+function! scriptease#disarm_command(bang, ...) abort
   let files = []
   let unlets = []
   for request in a:000
@@ -586,20 +586,10 @@ function! s:disarm(...) abort
   return join(filter(unlets, 'v:val !=# ""'), '|')
 endfunction
 
-command! -bang -bar -nargs=* -complete=customlist,s:Complete Disarm
-      \ :exe s:disarm(<f-args>)
+command! -bang -bar -nargs=* -complete=customlist,scriptease#complete Disarm
+      \ :exe scriptease#disarm_command(<bang>0, <f-args>)
 
 " Section: :Breakadd, :Breakdel
-
-augroup scriptease_breakadd
-  autocmd!
-  autocmd FileType vim command!
-        \   -buffer -bar -nargs=? -complete=custom,s:Complete_breakadd Breakadd
-        \ :exe s:break('add',<q-args>)
-  autocmd FileType vim command!
-        \   -buffer -bar -nargs=? -complete=custom,s:Complete_breakdel Breakdel
-        \ :exe s:break('del',<q-args>)
-augroup END
 
 function! s:breaksnr(arg) abort
   let id = scriptease#scriptid('%')
@@ -680,7 +670,7 @@ function! s:runtime_globpath(file) abort
   return split(globpath(escape(&runtimepath, ' '), a:file), "\n")
 endfunction
 
-function! s:find(count,cmd,file,lcd) abort
+function! scriptease#open_command(count,cmd,file,lcd) abort
   let found = s:runtime_globpath(a:file)
   let file = get(found, a:count - 1, '')
   if file ==# ''
@@ -711,28 +701,28 @@ function! s:find(count,cmd,file,lcd) abort
   endif
 endfunction
 
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Ve
-      \ :execute s:find(<count>,'edit<bang>',<q-args>,0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vedit
-      \ :execute s:find(<count>,'edit<bang>',<q-args>,0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vopen
-      \ :execute s:find(<count>,'edit<bang>',<q-args>,1)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vsplit
-      \ :execute s:find(<count>,'split',<q-args>,<bang>0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vvsplit
-      \ :execute s:find(<count>,'vsplit',<q-args>,<bang>0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vtabedit
-      \ :execute s:find(<count>,'tabedit',<q-args>,<bang>0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vpedit
-      \ :execute s:find(<count>,'pedit<bang>',<q-args>,0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Complete Vread
-      \ :execute s:find(<count>,'read',<q-args>,<bang>0)
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Ve
+      \ :execute scriptease#open_command(<count>,'edit<bang>',<q-args>,0)
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vedit
+      \ :execute scriptease#open_command(<count>,'edit<bang>',<q-args>,0)
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vopen
+      \ :execute scriptease#open_command(<count>,'edit<bang>',<q-args>,1)
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vsplit
+      \ :execute scriptease#open_command(<count>,'split',<q-args>,<bang>0)
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vvsplit
+      \ :execute scriptease#open_command(<count>,'vsplit',<q-args>,<bang>0)
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vtabedit
+      \ :execute scriptease#open_command(<count>,'tabedit',<q-args>,<bang>0)
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vpedit
+      \ :execute scriptease#open_command(<count>,'pedit<bang>',<q-args>,0)
+command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vread
+      \ :execute scriptease#open_command(<count>,'read',<q-args>,<bang>0)
 
 " Section: :Time
 
-command! -count=1 -nargs=? -complete=command Time :exe s:time(<q-args>, <count>)
+command! -count=1 -nargs=? -complete=command Time :exe scriptease#time_command(<q-args>, <count>)
 
-function! s:time(cmd, count) abort
+function! scriptease#time_command(cmd, count) abort
   let time = reltime()
   try
     if a:count > 1
@@ -762,7 +752,7 @@ function! scriptease#synnames(...) abort
   return reverse(map(synstack(line, col), 'synIDattr(v:val,"name")'))
 endfunction
 
-function! s:zS(count) abort
+function! scriptease#synnames_map(count) abort
   if a:count
     let name = get(scriptease#synnames(), a:count-1, '')
     if name !=# ''
@@ -774,23 +764,16 @@ function! s:zS(count) abort
   return ''
 endfunction
 
-nnoremap <silent> <Plug>ScripteaseSynnames :<C-U>exe <SID>zS(v:count)<CR>
+nnoremap <silent> <Plug>ScripteaseSynnames :<C-U>exe scriptease#synnames_map(v:count)<CR>
 if empty(mapcheck('zS', 'n'))
   nmap zS <Plug>ScripteaseSynnames
 endif
 
 " Section: K
 
-nnoremap <silent> <Plug>ScripteaseHelp :<C-U>exe 'help '.<SID>helptopic()<CR>
-augroup scriptease_help
-  autocmd!
-  autocmd FileType vim
-        \  if empty(mapcheck('K', 'n'))
-        \| nmap <silent><buffer> K <Plug>ScripteaseHelp
-        \| endif
-augroup END
+nnoremap <silent> <Plug>ScripteaseHelp :<C-U>exe 'help '.scriptease#helptopic()<CR>
 
-function! s:helptopic() abort
+function! scriptease#helptopic() abort
   let col = col('.') - 1
   while col && getline('.')[col] =~# '\k'
     let col -= 1
@@ -836,7 +819,7 @@ function! scriptease#includeexpr(file) abort
   return substitute(a:file, '<sfile>', '%', 'g')
 endfunction
 
-function! s:cfile() abort
+function! scriptease#cfile() abort
   let original = expand('<cfile>')
   let cfile = original
   if cfile =~# '^\.\=[A-Za-z_]\w*\%(#\w\+\)\+$'
@@ -846,21 +829,33 @@ function! s:cfile() abort
   endif
 endfunction
 
-function! s:setup() abort
+function! scriptease#setup_vim() abort
+  let &l:path = s:build_path()
   setlocal suffixesadd=.vim keywordprg=:help
   setlocal includeexpr=scriptease#includeexpr(v:fname)
   setlocal include=^\\s*\\%(so\\%[urce]\\\|ru\\%[untime]\\)[!\ ]\ *
   setlocal define=^\\s*fu\\%[nction][!\ ]\\s*
-  cnoremap <expr><buffer> <Plug><cfile> <SID>cfile()
+  cnoremap <expr><buffer> <Plug><cfile> scriptease#cfile()
   let b:dispatch = ':Runtime'
   command! -bar -bang -buffer Console Runtime|PP
+  command! -buffer -bar -nargs=? -complete=custom,s:Complete_breakadd Breakadd
+        \ :exe s:break('add',<q-args>)
+  command! -buffer -bar -nargs=? -complete=custom,s:Complete_breakdel Breakdel
+        \ :exe s:break('del',<q-args>)
+  if empty(mapcheck('K', 'n'))
+    nmap <silent><buffer> K <Plug>ScripteaseHelp
+  endif
+endfunction
+
+function! scriptease#setup_help() abort
+  let &l:path = s:build_path()
+  command! -bar -bang -buffer Console PP
 endfunction
 
 augroup scriptease
   autocmd!
-  autocmd FileType vim,help let &l:path = s:build_path()
-  autocmd FileType help command! -bar -bang -buffer Console PP
-  autocmd FileType vim call s:setup()
+  autocmd FileType help call scriptease#setup_help()
+  autocmd FileType vim call scriptease#setup_vim()
   " Recent versions of vim.vim set iskeyword to include ":", which breaks among
   " other things tags. :(
   autocmd FileType vim setlocal iskeyword-=:
@@ -871,7 +866,7 @@ augroup END
 
 function! s:projectionist_detect() abort
   let file = get(g:, 'projectionist_file', '')
-  let path = s:sub(s:findinrtp(file)[0], '[\/]after$', '')
+  let path = substitute(scriptease#locate(file)[0], '[\/]after$', '', '')
   if !empty(path)
     let reload = ":Runtime ./{open}autoload,plugin{close}/**/*.vim"
     call projectionist#append(path, {
