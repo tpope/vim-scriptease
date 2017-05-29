@@ -9,7 +9,7 @@ let g:loaded_scriptease = 1
 
 " Section: Commands
 
-command! -bang -range=999998 -nargs=? -complete=expression PP
+command! -bang -range=-1 -nargs=? -complete=expression PP
       \ if empty(<q-args>) |
       \   let s:more = &more |
       \   try |
@@ -22,7 +22,7 @@ command! -bang -range=999998 -nargs=? -complete=expression PP
       \       echon "\n" |
       \       let v:errmsg = '' |
       \       try |
-      \         call scriptease#pp_command(<bang>0, 999998, eval(s:input)) |
+      \         call scriptease#pp_command(<bang>0, -1, eval(s:input)) |
       \       catch |
       \         echohl ErrorMsg |
       \         echo v:exception |
@@ -46,8 +46,8 @@ command! -bang -range=0      -nargs=? -complete=expression PPmsg
       \  echomsg expand('<sfile>').', line '.expand('<slnum>') |
       \ endif
 
-command! -range=999998 -nargs=1 -complete=command Verbose
-      \ :exe scriptease#verbose_command(<count> == 999998 ? '' : <count>, <q-args>)
+command! -range=-1 -nargs=1 -complete=command Verbose
+      \ :exe scriptease#verbose_command(<count> == -1 ? '' : <count>, <q-args>)
 
 command! -bar -count=0 Scriptnames
       \ call setqflist(scriptease#scriptnames_qflist()) |

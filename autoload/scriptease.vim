@@ -147,7 +147,7 @@ endfunction
 function! scriptease#pp_command(bang, lnum, value) abort
   if v:errmsg !=# ''
     return
-  elseif a:lnum == 999998
+  elseif a:lnum == -1
     echo scriptease#dump(a:value, {'width': a:bang ? 0 : &columns-1})
   else
     exe a:lnum
