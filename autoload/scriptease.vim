@@ -268,7 +268,7 @@ endfunction
 
 function! scriptease#scriptname(file) abort
   if a:file =~# '^\d\+$'
-    return get(s:names(), a:file-1, {'filename': a:file}).filename
+    return get(scriptease#scriptnames_qflist(), a:file-1, {'filename': a:file}).filename
   else
     return a:file
   endif
@@ -276,7 +276,7 @@ endfunction
 
 function! scriptease#scriptid(filename) abort
   let filename = fnamemodify(expand(a:filename), ':p')
-  for script in s:names()
+  for script in scriptease#scriptnames_qflist()
     if script.filename ==# filename
       return +script.text
     endif
