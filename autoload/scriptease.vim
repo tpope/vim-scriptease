@@ -725,9 +725,13 @@ endfunction
 " Section: Settings
 
 function! s:build_path() abort
-  let old_path = substitute(&g:path, '\v^\.,/%(usr|emx)/include,,,?', '', '')
   let new_path = escape(&runtimepath, ' ')
-  return !empty(old_path) ? old_path.','.new_path : new_path
+  let result = substitute(&g:path, '\v(^|,)/%(usr|emx)/include(,|$)', '\1' . escape(new_path, '\&') . '\2', '')
+  if result ==# &g:path
+    return !empty(&g:path) ? &g:path.','.new_path : new_path
+  else
+    return result
+  endif
 endfunction
 
 function! scriptease#includeexpr(file) abort
