@@ -49,8 +49,8 @@ command! -bang -range=0      -nargs=? -complete=expression PPmsg
 command! -range=-1 -nargs=1 -complete=command Verbose
       \ :exe scriptease#verbose_command(<count> == -1 ? '' : <count>, <q-args>)
 
-command! -bar -count=0 Scriptnames
-      \ call setqflist(scriptease#scriptnames_qflist()) |
+command! -bar -count=0 -nargs=? Scriptnames
+      \ call setqflist(scriptease#scriptnames_qflist(<q-args>)) |
       \ copen |
       \ <count>
 

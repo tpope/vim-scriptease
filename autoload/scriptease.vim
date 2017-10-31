@@ -255,12 +255,15 @@ function! scriptease#capture(excmd) abort
   return out
 endfunction
 
-function! scriptease#scriptnames_qflist() abort
+function! scriptease#scriptnames_qflist(...) abort
+  let pattern = get(a:000, 0)
   let names = scriptease#capture('scriptnames')
   let list = []
   for line in split(names, "\n")
     if line =~# ':'
-      call add(list, {'text': matchstr(line, '\d\+'), 'filename': expand(matchstr(line, ': \zs.*'))})
+      if match(line, pattern) !=# -1
+        call add(list, {'text': matchstr(line, '\d\+'), 'filename': expand(matchstr(line, ': \zs.*'))})
+      endif
     endif
   endfor
   return list
