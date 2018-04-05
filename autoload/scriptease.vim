@@ -114,7 +114,11 @@ function! scriptease#dump(object, ...) abort
     endif
   elseif type(a:object) ==# type({})
     let childopt.seen += [a:object]
-    let keys = sort(keys(a:object))
+    let keys = keys(a:object)
+    if type(keys) != type([])
+      return "get(function('tr'), 'dict')"
+    endif
+    call sort(keys)
     let dump = '{'.join(map(copy(keys), 'scriptease#dump(v:val) . ": " . scriptease#dump(a:object[v:val], {"seen": childopt.seen, "level": childopt.level})'), ', ').'}'
     if opt.width && opt.level + len(s:gsub(dump, '.', '.')) > opt.width
       let space = repeat(' ', opt.level)
