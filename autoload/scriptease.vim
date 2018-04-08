@@ -178,36 +178,26 @@ endfunction
 
 " Section: g!
 
-function! s:opfunc(type) abort
-  let sel_save = &selection
-  let cb_save = &clipboard
-  let reg_save = @@
+function! s:opfunc(t) abort
+  let saved = [&selection, &clipboard, @@]
   try
     set selection=inclusive clipboard-=unnamed clipboard-=unnamedplus
-    if a:type =~ '^\d\+$'
-      silent exe 'normal! ^v'.a:type.'$hy'
-    elseif a:type =~# '^.$'
-      silent exe "normal! `<" . a:type . "`>y"
-    elseif a:type ==# 'line'
-      silent exe "normal! '[V']y"
-    elseif a:type ==# 'block'
-      silent exe "normal! `[\<C-V>`]y"
-    else
-      silent exe "normal! `[v`]y"
-    endif
+    silent exe "norm! `[" . get({'l': 'V', 'b': "\<C-V>"}, a:t[0], 'v') . "`]y"
     redraw
     return @@
   finally
-    let @@ = reg_save
-    let &selection = sel_save
-    let &clipboard = cb_save
+    let [&selection, &clipboard, @@] = saved
   endtry
 endfunction
 
-function! scriptease#filterop(type) abort
+function! scriptease#filterop(...) abort
+  if !a:0
+    set opfunc=scriptease#filterop
+    return 'g@'
+  endif
   let reg_save = @@
   try
-    let expr = s:opfunc(a:type)
+    let expr = s:opfunc(a:1)
     let @@ = matchstr(expr, '^\_s\+').scriptease#dump(eval(s:gsub(expr,'\n%(\s*\\)=',''))).matchstr(expr, '\_s\+$')
     if @@ !~# '^\n*$'
       normal! gvp
