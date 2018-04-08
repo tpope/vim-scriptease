@@ -221,16 +221,6 @@ function! scriptease#filterop(type) abort
   endtry
 endfunction
 
-nnoremap <silent> <Plug>ScripteaseFilter :<C-U>set opfunc=scriptease#filterop<CR>g@
-xnoremap <silent> <Plug>ScripteaseFilter :<C-U>call scriptease#filterop(visualmode())<CR>
-if empty(mapcheck('g!', 'n'))
-  nmap g! <Plug>ScripteaseFilter
-  nmap g!! <Plug>ScripteaseFilter_
-endif
-if empty(mapcheck('g!', 'x'))
-  xmap g! <Plug>ScripteaseFilter
-endif
-
 " Section: :Verbose
 
 function! scriptease#verbose_command(level, excmd) abort
