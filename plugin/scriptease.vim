@@ -2,7 +2,7 @@
 " Maintainer:   Tim Pope <http://tpo.pe/>
 " Version:      1.0
 
-if exists('g:loaded_scriptease') || &cp
+if exists('g:loaded_scriptease') || &compatible
   finish
 endif
 let g:loaded_scriptease = 1
@@ -116,19 +116,19 @@ function! s:projectionist_detect() abort
   let file = get(g:, 'projectionist_file', '')
   let path = substitute(scriptease#locate(file)[0], '[\/]after$', '', '')
   if !empty(path)
-    let reload = ":Runtime ./{open}autoload,plugin{close}/**/*.vim"
+    let reload = ':Runtime ./{open}autoload,plugin{close}/**/*.vim'
     call projectionist#append(path, {
-          \ "*": {"start": reload},
-          \ "*.vim": {"start": reload},
-          \ "plugin/*.vim":   {"command": "plugin", "alternate": "autoload/{}.vim"},
-          \ "autoload/*.vim": {"command": "autoload", "alternate": "plugin/{}.vim"},
-          \ "compiler/*.vim": {"command": "compiler"},
-          \ "ftdetect/*.vim": {"command": "ftdetect"},
-          \ "syntax/*.vim":   {"command": "syntax", "alternate": ["ftplugin/{}.vim", "indent/{}.vim"]},
-          \ "ftplugin/*.vim": {"command": "ftplugin", "alternate": ["indent/{}.vim", "syntax/{}.vim"]},
-          \ "indent/*.vim":   {"command": "indent", "alternate": ["syntax/{}.vim", "ftplugin/{}.vim"]},
-          \ "after/*.vim":    {"command": "after"},
-          \ "doc/*.txt":      {"command": "doc", "start": reload}})
+          \ '*': {'start': reload},
+          \ '*.vim': {'start': reload},
+          \ 'plugin/*.vim':   {'command': 'plugin', 'alternate': 'autoload/{}.vim'},
+          \ 'autoload/*.vim': {'command': 'autoload', 'alternate': 'plugin/{}.vim'},
+          \ 'compiler/*.vim': {'command': 'compiler'},
+          \ 'ftdetect/*.vim': {'command': 'ftdetect'},
+          \ 'syntax/*.vim':   {'command': 'syntax', 'alternate': ['ftplugin/{}.vim', 'indent/{}.vim']},
+          \ 'ftplugin/*.vim': {'command': 'ftplugin', 'alternate': ['indent/{}.vim', 'syntax/{}.vim']},
+          \ 'indent/*.vim':   {'command': 'indent', 'alternate': ['syntax/{}.vim', 'ftplugin/{}.vim']},
+          \ 'after/*.vim':    {'command': 'after'},
+          \ 'doc/*.txt':      {'command': 'doc', 'start': reload}})
   endif
 endfunction
 
