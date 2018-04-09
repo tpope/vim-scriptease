@@ -398,17 +398,22 @@ function! s:lencompare(a, b) abort
   return len(a:a) - len(a:b)
 endfunction
 
-function! scriptease#locate(path) abort
-  let path = fnamemodify(a:path, ':p')
-  let candidates = []
-  for glob in split(&runtimepath, ',')
-    let candidates += filter(split(glob(glob), "\n"), 'path[0 : len(v:val)-1] ==# v:val && path[len(v:val)] =~# "[\\/]"')
-  endfor
-  if empty(candidates)
-    return ['', '']
+" a:path should be absolute and resolved for symlinks.
+" a:1 can be a list of candidates, which must not be empty.
+function! scriptease#locate(path, ...) abort
+  if a:0
+    let candidates = a:1
+  else
+    let candidates = []
+    for glob in split(&runtimepath, ',')
+      let candidates += filter(split(glob(resolve(glob)), "\n"), 'a:path[0 : len(v:val)-1] ==# v:val && a:path[len(v:val)] =~# "[\\/]"')
+    endfor
+    if empty(candidates)
+      return ['', '']
+    endif
   endif
   let preferred = sort(candidates, s:function('s:lencompare'))[-1]
-  return [preferred, path[strlen(preferred)+1 : -1]]
+  return [preferred, a:path[strlen(preferred)+1 : -1]]
 endfunction
 
 function! scriptease#runtime_command(bang, ...) abort
@@ -419,7 +424,7 @@ function! scriptease#runtime_command(bang, ...) abort
   if a:0
     let files = a:000
   elseif &filetype ==# 'vim' || expand('%:e') ==# 'vim'
-    let files = [scriptease#locate(expand('%:p'))[1]]
+    let files = [scriptease#locate(resolve(expand('%:p')))[1]]
     if empty(files[0])
       let files = ['%']
     endif

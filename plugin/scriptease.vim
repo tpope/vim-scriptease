@@ -113,8 +113,19 @@ augroup END
 " Section: Projectionist
 
 function! s:projectionist_detect() abort
-  let file = get(g:, 'projectionist_file', '')
-  let path = substitute(scriptease#locate(file)[0], '[\/]after$', '', '')
+  let file = resolve(get(g:, 'projectionist_file', ''))
+
+  " Build a list of candidates here to skip unnecessary autoloading of
+  " scriptease#locate.
+  let candidates = []
+  for glob in split(&runtimepath, ',')
+    let candidates += filter(split(glob(resolve(glob)), "\n"), 'file[0 : len(v:val)-1] ==# v:val && file[len(v:val)] =~# "[\\/]"')
+  endfor
+  if empty(candidates)
+    return
+  endif
+
+  let path = substitute(scriptease#locate(file, candidates)[0], '[\/]after$', '', '')
   if !empty(path)
     let reload = ":Runtime ./{open}autoload,plugin{close}/**/*.vim"
     call projectionist#append(path, {
