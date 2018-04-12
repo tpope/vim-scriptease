@@ -116,7 +116,7 @@ function! scriptease#dump(object, ...) abort
     let childopt.seen += [a:object]
     let keys = keys(a:object)
     if type(keys) != type([])
-      return "get(function('tr'), 'dict')"
+      return "test_null_dict()"
     endif
     call sort(keys)
     let dump = '{'.join(map(copy(keys), 'scriptease#dump(v:val) . ": " . scriptease#dump(a:object[v:val], {"seen": childopt.seen, "level": childopt.level})'), ', ').'}'
