@@ -1,4 +1,4 @@
-" Location:     autoload/scriptease.vim.vim
+" Location:     autoload/scriptease.vim
 
 if exists('g:autoloaded_scriptease') || &cp
   finish
