@@ -83,11 +83,19 @@ command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete V
 
 " Section: Maps
 
-nmap <expr> <Plug>ScripteaseFilter scriptease#filterop()
-xmap <expr> <Plug>ScripteaseFilter scriptease#filterop()
+nnoremap <expr> <Plug>ScripteaseFilter scriptease#filterop()
+xnoremap <expr> <Plug>ScripteaseFilter scriptease#filterop()
+onoremap <SID>_ _
+if empty(mapcheck('g=', 'n'))
+  nmap g= <Plug>ScripteaseFilter
+  nmap g== <Plug>ScripteaseFilter<SID>_
+endif
+if empty(mapcheck('g=', 'x'))
+  xmap g= <Plug>ScripteaseFilter
+endif
 if empty(mapcheck('g!', 'n'))
   nmap g! <Plug>ScripteaseFilter
-  nmap g!! <Plug>ScripteaseFilter_
+  nmap g!! <Plug>ScripteaseFilter<SID>_
 endif
 if empty(mapcheck('g!', 'x'))
   xmap g! <Plug>ScripteaseFilter

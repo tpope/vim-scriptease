@@ -20,14 +20,17 @@ zS                      Show the names of all syntax highlighting groups for
 K                       Like setting 'keywordprg' to :help, but slightly
                         smarter.  Only mapped in Vim files.
 
-                                                *scriptease-g!*
-g!{motion}              Call |eval()| on the text the motion moves over and
-                        replace it with the result.  If you press g!! on a
+                                                *scriptease-g=*
+g={motion}              Call |eval()| on the text the motion moves over and
+g==                     replace it with the result.  If you press g!! on a
                         line containing "2+2", the line will be changed to
                         "4".
 
-{Visual}g!              Call |eval()| on the selection and replace it with the
+{Visual}g=              Call |eval()| on the selection and replace it with the
                         result.
+
+                                                *scriptease-g!*
+g!                      Old alias for |g=|.
 
                                                 *scriptease-:Breakadd*
 :Breakadd ..            Like |:breakadd|, but accepts s: functions, and if you
