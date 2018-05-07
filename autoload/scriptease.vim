@@ -747,8 +747,11 @@ function! scriptease#setup_vim() abort
         \ :exe s:break('del',<q-args>)
 
   nnoremap <silent><buffer> <Plug>ScripteaseHelp :<C-U>exe 'help '.scriptease#helptopic()<CR>
+  let b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe') .
+        \ '|setlocal path= suffixesadd= includeexpr= include= define= keywordprg=|sil! delcommand Breakadd|sil! delcommand Breakdel'
   if empty(mapcheck('K', 'n'))
     nmap <silent><buffer> K <Plug>ScripteaseHelp
+    let b:undo_ftplugin .= 'sil! exe "nunmap <buffer> K"'
   endif
 endfunction
 
