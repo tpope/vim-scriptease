@@ -22,7 +22,7 @@ K                       Like setting 'keywordprg' to :help, but slightly
 
                                                 *scriptease-g=*
 g={motion}              Call |eval()| on the text the motion moves over and
-g==                     replace it with the result.  If you press g!! on a
+g==                     replace it with the result.  If you press g== on a
                         line containing "2+2", the line will be changed to
                         "4".
 
