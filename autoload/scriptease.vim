@@ -724,12 +724,13 @@ endfunction
 
 function! scriptease#cfile() abort
   if matchend(getline('.'), &include) >= col('.')
-    let original = matchstr(getline('.'), &include)
+    let cfile = matchstr(getline('.'), &include)
   else
-    let original = expand('<cfile>')
+    let cfile = expand('<cfile>')
   endif
-  let cfile = original
-  if cfile =~# '^\.\=[A-Za-z_]\w*\%(#\w\+\)\+$'
+  if empty(cfile)
+    return "\<C-R>\<C-F>"
+  elseif cfile =~# '^\.\=[A-Za-z_]\w*\%(#\w\+\)\+$'
     return '+djump\ ' . matchstr(cfile, '[^.]*') . ' ' . s:fnameescape(scriptease#includeexpr(cfile))
   else
     return s:fnameescape(scriptease#includeexpr(cfile))
