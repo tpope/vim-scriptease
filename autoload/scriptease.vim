@@ -741,7 +741,7 @@ function! scriptease#setup_vim() abort
   let &l:path = s:build_path()
   setlocal suffixesadd=.vim keywordprg=:help
   setlocal includeexpr=scriptease#includeexpr(v:fname)
-  setlocal include=^\\s*\\%(so\\%[urce]\\\|ru\\%[untime]\\)[!\ ]\ *\\zs[^\\|]*
+  setlocal include=^\\s*\\%(so\\%[urce]\\\|ru\\%[ntime]\\)[!\ ]\ *\\zs[^\\|]*
   setlocal define=^\\s*fu\\%[nction][!\ ]\\s*
   cnoremap <expr><buffer> <Plug><cfile> scriptease#cfile()
   let b:dispatch = ':Runtime'
