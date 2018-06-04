@@ -149,7 +149,7 @@ function! s:backslashdump(value, indent) abort
 endfunction
 
 function! scriptease#pp_command(bang, lnum, value) abort
-  if v:errmsg !=# ''
+  if v:errmsg !=# '' && a:value is# 0
     return
   elseif a:lnum == -1
     echo scriptease#dump(a:value, {'width': a:bang ? 0 : &columns-1})
