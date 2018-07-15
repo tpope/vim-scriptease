@@ -274,10 +274,12 @@ endfunction
 
 function! scriptease#scriptnames_qflist() abort
   let names = scriptease#capture('scriptnames')
+  let virtual = get(g:, 'virtual_scriptnames', {})
   let list = []
   for line in split(names, "\n")
     if line =~# ':'
-      call add(list, {'text': matchstr(line, '\d\+'), 'filename': expand(matchstr(line, ': \zs.*'))})
+      let filename = expand(matchstr(line, ': \zs.*'))
+      call add(list, {'text': matchstr(line, '\d\+'), 'filename': get(virtual, filename, filename)})
     endif
   endfor
   return list
@@ -305,6 +307,7 @@ endfunction
 
 function! scriptease#messages_command(bang) abort
   let qf = []
+  let virtual = get(g:, 'virtual_scriptnames', {})
   for line in split(scriptease#capture('messages'), '\n\+')
     let lnum = matchstr(line, '\C^line\s\+\zs\d\+\ze:$')
     if lnum && len(qf) && qf[-1].text =~# ':$'
@@ -321,8 +324,8 @@ function! scriptease#messages_command(bang) abort
       call add(qf, {'text': funcline})
       let lnum = matchstr(funcline, '\[\zs\d\+\ze\]$')
       let function = substitute(funcline, '\[\d\+\]$', '', '')
-      if function =~# '[\\/.]' && s:filereadable(function)
-        let qf[-1].filename = function
+      if function =~# '[\\/.]' && s:filereadable(get(virtual, function, function))
+        let qf[-1].filename = get(virtual, function, function)
         let qf[-1].lnum = lnum
         let qf[-1].text = ''
         continue
@@ -337,6 +340,7 @@ function! scriptease#messages_command(bang) abort
         let &list = list
       endtry
       let filename = expand(matchstr(get(output, 1, ''), 'from \zs.*'))
+      let filename = get(virtual, filename, filename)
       if !s:filereadable(filename)
         continue
       endif
