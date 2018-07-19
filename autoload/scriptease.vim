@@ -781,7 +781,9 @@ function! scriptease#setup_vim() abort
   setlocal include=^\\s*\\%(so\\%[urce]\\\|ru\\%[ntime]\\)[!\ ]\ *\\zs[^\\|]*
   setlocal define=^\\s*fu\\%[nction][!\ ]\\s*\\%(s:\\)\\=
   cnoremap <expr><buffer> <Plug><cfile> scriptease#cfile()
-  let b:dispatch = ':Runtime'
+
+  let runtime = scriptease#locate(expand('%:p'))[1]
+  let b:dispatch = ':Runtime ' . s:fnameescape(len(runtime) ? runtime : expand('%:p'))
   command! -bar -bang -buffer Console Runtime|PP
   command! -buffer -bar -nargs=? -complete=custom,s:Complete_breakadd Breakadd
         \ :exe s:break('add',<q-args>)
