@@ -793,7 +793,7 @@ function! scriptease#setup_vim() abort
         \ '|setlocal path= suffixesadd= includeexpr= include= define= keywordprg=|sil! delcommand Breakadd|sil! delcommand Breakdel'
   if empty(mapcheck('K', 'n'))
     nmap <silent><buffer> K <Plug>ScripteaseHelp
-    let b:undo_ftplugin .= 'sil! exe "nunmap <buffer> K"'
+    let b:undo_ftplugin .= '|sil! exe "nunmap <buffer> K"'
   endif
 endfunction
 
