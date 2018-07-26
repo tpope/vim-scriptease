@@ -62,6 +62,14 @@ function! s:glob(pattern) abort
   endif
 endfunction
 
+function! s:globrtp(expr) abort
+  if v:version >= 703
+    return globpath(escape(&runtimepath, ' '), a:expr, 1)
+  else
+    return globpath(escape(&runtimepath, ' '), a:expr)
+  endif
+endfunction
+
 function! s:isdirectory(path) abort
   return s:fcall('isdirectory', a:path)
 endfunction
@@ -450,7 +458,7 @@ function! scriptease#runtime_command(bang, ...) abort
   else
     for ft in split(&filetype, '\.')
       for pattern in ['ftplugin/%s.vim', 'ftplugin/%s_*.vim', 'ftplugin/%s/*.vim', 'indent/%s.vim', 'syntax/%s.vim', 'syntax/%s/*.vim']
-        call extend(unlets, split(globpath(&rtp, printf(pattern, ft)), "\n"))
+        call extend(unlets, split(s:globrtp(printf(pattern, ft)), "\n"))
       endfor
     endfor
     let run = s:unlet_for(unlets)
@@ -471,7 +479,7 @@ function! scriptease#runtime_command(bang, ...) abort
       if get(do, 0, [''])[0] !~# '^runtime!'
         let do += ['runtime!']
       endif
-      let unlets += split(globpath(&rtp, request, 1), "\n")
+      let unlets += split(s:globrtp(request), "\n")
       let do[-1] .= ' '.escape(request, " \t|!")
     endif
   endfor
@@ -545,7 +553,7 @@ function! scriptease#disarm_command(bang, ...) abort
       endif
       let files += s:glob(request)
     else
-      let files += split(globpath(&rtp, request, 1), "\n")
+      let files += split(s:globrtp(request), "\n")
     endif
   endfor
   for file in files
