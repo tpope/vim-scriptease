@@ -114,8 +114,14 @@ augroup scriptease
   autocmd FileType vim call scriptease#setup_vim()
   " Recent versions of vim.vim set iskeyword to include ":", which breaks among
   " other things tags. :(
-  autocmd FileType vim setlocal iskeyword-=:
-  autocmd Syntax vim setlocal iskeyword-=:
+  autocmd FileType vim
+        \ if get(g:, 'scriptease_iskeyword', 1) |
+        \   setlocal iskeyword-=: |
+        \ endif
+  autocmd Syntax vim
+        \ if get(g:, 'scriptease_iskeyword', 1) |
+        \   setlocal iskeyword-=: |
+        \ endif
 augroup END
 
 " Section: Projectionist
