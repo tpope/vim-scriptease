@@ -220,15 +220,9 @@ endfunction
 " Section: g!
 
 function! s:opfunc(t) abort
-  let saved = [&selection, &clipboard, @@]
-  try
-    set selection=inclusive clipboard-=unnamed clipboard-=unnamedplus
-    silent exe "norm! `[" . get({'l': 'V', 'b': "\<C-V>"}, a:t[0], 'v') . "`]y"
-    redraw
-    return @@
-  finally
-    let [&selection, &clipboard, @@] = saved
-  endtry
+  silent exe "norm! `[" . get({'l': 'V', 'b': "\<C-V>"}, a:t[0], 'v') . "`]y"
+  redraw
+  return @@
 endfunction
 
 function! scriptease#filterop(...) abort
@@ -236,8 +230,9 @@ function! scriptease#filterop(...) abort
     set opfunc=scriptease#filterop
     return 'g@'
   endif
-  let reg_save = @@
+  let saved = [&selection, &clipboard, @@]
   try
+    set selection=inclusive clipboard-=unnamed clipboard-=unnamedplus
     let expr = s:opfunc(a:1)
     let @@ = matchstr(expr, '^\_s\+').scriptease#dump(eval(s:gsub(expr,'\n%(\s*\\)=',''))).matchstr(expr, '\_s\+$')
     if @@ !~# '^\n*$'
@@ -248,7 +243,7 @@ function! scriptease#filterop(...) abort
     echo v:errmsg
     echohl NONE
   finally
-    let @@ = reg_save
+    let [&selection, &clipboard, @@] = saved
   endtry
 endfunction
 
