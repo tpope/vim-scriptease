@@ -42,7 +42,7 @@ g!                      Old alias for |g=|.
 :Breakdel ..            Like |:breakdel|, but with the same enhancements as
                         |:Breakadd|.  Only available in Vim files.
 
-                                                *scriptease-:Disable*
+                                                *scriptease-:Disarm*
 :Disarm {file} ..       Attempt to disable a runtime file by removing its
                         |:map|s, |:command|s, and |:autocmd|s.  Accepts either
                         an absolute (~/.vim/plugin/scriptease.vim) or
