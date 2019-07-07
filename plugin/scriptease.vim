@@ -46,8 +46,9 @@ command! -bang -range=0      -nargs=? -complete=expression PPmsg
       \  echomsg expand('<sfile>').', line '.expand('<slnum>') |
       \ endif
 
-command! -range=-1 -nargs=1 -complete=command Verbose
-      \ :exe scriptease#verbose_command(<count> == -1 ? '' : <count>, <q-args>)
+let s:addr_other = has('patch-8.1.560') ? ' -addr=other ' : ''
+exe 'command! -range=-1 -nargs=1 -complete=command' s:addr_other 'Verbose'
+      \ ':exe scriptease#verbose_command(<count> == -1 ? "" : <count>, <q-args>)'
 
 command! -bar -count=0 Scriptnames
       \ call setqflist(scriptease#scriptnames_qflist()) |
