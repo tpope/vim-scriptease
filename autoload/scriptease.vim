@@ -807,4 +807,14 @@ function! scriptease#setup_help() abort
   command! -bar -bang -buffer Console PP
 endfunction
 
+function! scriptease#rtp_add_command(...) abort
+  let l:cmd = 'set runtimepath^='
+  if a:0
+    let l:dirs = a:000
+  else
+    let l:dirs = [getcwd()]
+  endif
+  return l:cmd . join(l:dirs, ',')
+endfunction
+
 " vim:set et sw=2:

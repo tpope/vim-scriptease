@@ -88,6 +88,11 @@ g!                      Old alias for |g=|.
                         |:unlet|ting any include guards in the relevant
                         syntax, indent, and ftplugin files.
 
+                                                *scriptease-:RtpAdd*
+:RtpAdd                 Prepend the current directory to 'runtimepath'.
+
+:RtpAdd {dir} ..        Prepend given directories to 'runtimepath'.
+
                                                 *scriptease-:Scriptnames*
 :Scriptnames            Load |:scriptnames| into the quickfix list and
                         |:copen|.

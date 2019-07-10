@@ -59,6 +59,8 @@ command! -bar -bang Messages :execute scriptease#messages_command(<bang>0)
 command! -bang -bar -range=-1 -nargs=* -complete=customlist,scriptease#complete Runtime
       \ :exe scriptease#runtime_command('<bang>', <f-args>)
 
+command! -bar -nargs=* RtpAdd :execute scriptease#rtp_add_command(<f-args>)
+
 command! -bang -bar -nargs=* -complete=customlist,scriptease#complete Disarm
       \ :exe scriptease#disarm_command(<bang>0, <f-args>)
 
