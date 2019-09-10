@@ -664,8 +664,10 @@ function! scriptease#open_command(count,cmd,file,lcd) abort
     elseif a:cmd !~# '^edit'
       exe a:cmd
     endif
+    exe 'silent doautocmd QuickFixCmdPre V' . a:cmd
     call setloclist(window, map(found,
           \ '{"filename": v:val, "text": v:val[0 : -len(a:file)-2]}'))
+    exe 'silent doautocmd QuickFixCmdPost V' . a:cmd
     return precmd . 'll'.matchstr(a:cmd, '!$').' '.a:count . postcmd
   endif
 endfunction
