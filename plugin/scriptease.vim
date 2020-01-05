@@ -63,7 +63,7 @@ command! -bang -bar -range=-1 -nargs=* -complete=customlist,scriptease#complete 
 command! -bang -bar -nargs=* -complete=customlist,scriptease#complete Disarm
       \ :exe scriptease#disarm_command(<bang>0, <f-args>)
 
-command! -count=1 -nargs=? -complete=command Time :exe scriptease#time_command(<q-args>, <count>)
+command! -range=1 -nargs=? -complete=command Time :exe scriptease#time_command(<q-args>, <line2>)
 
 command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Ve
       \ :execute scriptease#open_command(<count>,'edit<bang>',<q-args>,0)
