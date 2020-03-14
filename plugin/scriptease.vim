@@ -82,6 +82,9 @@ command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete V
 command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vread
       \ :execute scriptease#open_command(<count>,'read',<q-args>,<bang>0)
 
+command! -bang -nargs=+ -complete=mapping MapHelp
+      \ :call scriptease#maphelp(<bang>0 ? 'Verbose ' : 'verbose ', <f-args>)
+
 " Section: Maps
 
 nnoremap <expr> <Plug>ScripteaseFilter scriptease#filterop()

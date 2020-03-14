@@ -54,6 +54,16 @@ g!                      Old alias for |g=|.
                         number combinations will be translated to the
                         appropriate file name and line number.
 
+                                                *scriptease-:MapHelp*
+:MapHelp {subject} [mode]
+                        Similar to |:verbose| |map|, but falls back to help if
+                        no map is found (to show built-in maps). See
+                        |maparg()| for {mode}. Searches all modes if {mode} is
+                        not specified.
+
+:MapHelp! {subject} [mode]
+                        Like |:MapHelp|, but map output uses |:Verbose|.
+
                                                 *scriptease-:PP*
 :PP {expr}              Pretty print the value of {expr}.
 

@@ -747,6 +747,68 @@ function! scriptease#helptopic() abort
   endif
 endfunction
 
+" Section: MapHelp
+
+function! s:ConvertCtrlFromMapToHelp(subject)
+  " Ctrl is input differently for maps and help. Users always use map-style
+  " input, so when we're looking in help we must convert to help-style.
+  let query = a:subject
+  let query = substitute(query, '\v\<C-((\w+|\S))\>', 'CTRL-\1', '')
+  let query = substitute(query, '\v\<C-((\w+|\S))\>', '_CTRL-\1', 'g')
+  return query
+endf
+function! scriptease#maphelp(verbose, subject, ...)
+  " First argument controls verbosity.
+  " Second argument is subject of map/help lookup.
+  " Optional third argument restricts search to a vim-mode.
+  let specific_query = ''
+  if a:0 == 1
+    let specific_query = a:1
+    let searching_modes = [ a:1 ]
+  else
+    let select = 's' " work around wonky syntax highlighting
+    let searching_modes = [ '', 'i', 'c', select, 'x', 'l' ]
+  endif
+
+  let found_map = 0
+  for mode in searching_modes
+    let map_lhs = maparg(a:subject, mode)
+    if len(map_lhs) > 0
+      exec a:verbose . mode .'map '. a:subject
+      let found_map = 1
+    endif
+  endfor
+
+  if found_map == 0
+    for mode in searching_modes
+      let prefix = ''
+      if mode != 'n' && len(mode) > 0
+        let prefix = mode .'_'
+      endif
+      try
+        exec 'help '. prefix . s:ConvertCtrlFromMapToHelp(a:subject)
+        let found_map = 1
+        " Can't open multiple help entries.
+        break
+
+      catch /^Vim\%((\a\+)\)\=:E149/
+      endtry
+    endfor
+  endif
+
+  if found_map == 0
+    if searching_modes[0] == ''
+      let searching_modes[0] = 'nvo'
+    endif
+    let searching_modes = join(searching_modes, '')
+    let plural = ''
+    if len(searching_modes) > 1
+      let plural = 's'
+    endif
+    echo 'No mapping found for '. a:subject .' for mode'. plural .' '. searching_modes .'.'
+  endif
+endf
+
 " Section: Settings
 
 function! s:build_path() abort
