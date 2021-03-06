@@ -9,6 +9,8 @@ let g:loaded_scriptease = 1
 
 " Section: Commands
 
+let s:othercmd = has('patch-8.1.560') ? 'command! -addr=other' : 'command!'
+
 command! -bang -range=-1 -nargs=? -complete=expression PP
       \ if empty(<q-args>) |
       \   let s:more = &more |
@@ -38,22 +40,21 @@ command! -bang -range=-1 -nargs=? -complete=expression PP
       \   call scriptease#pp_command(<bang>0, <count>, eval(<q-args>)) |
       \ endif
 
-command! -bang -range=0      -nargs=? -complete=expression PPmsg
-      \ if !empty(<q-args>) |
-      \   let v:errmsg = '' |
-      \   call scriptease#ppmsg_command(<bang>0, <count>, empty(<q-args>) ? expand('<sfile>') : eval(<q-args>)) |
-      \ elseif &verbose >= <count> && !empty(expand('<sfile>')) |
-      \  echomsg expand('<sfile>').', line '.expand('<slnum>') |
-      \ endif
+exe s:othercmd '-bang -range=0      -nargs=? -complete=expression PPmsg'
+      \ 'if !empty(<q-args>) |'
+      \ '  let v:errmsg = "" |'
+      \ '  call scriptease#ppmsg_command(<bang>0, <count>, empty(<q-args>) ? expand("<sfile>") : eval(<q-args>)) |'
+      \ 'elseif &verbose >= <count> && !empty(expand("<sfile>")) |'
+      \ ' echomsg expand("<sfile>").", line ".expand("<slnum>") |'
+      \ 'endif'
 
-let s:addr_other = has('patch-8.1.560') ? ' -addr=other ' : ''
-exe 'command! -range=-1 -nargs=1 -complete=command' s:addr_other 'Verbose'
+exe s:othercmd '-range=-1 -nargs=1 -complete=command Verbose'
       \ ':exe scriptease#verbose_command(<count> == -1 ? "" : <count>, <q-args>)'
 
-command! -bar -count=0 Scriptnames
-      \ call setqflist(scriptease#scriptnames_qflist()) |
-      \ copen |
-      \ <count>
+exe s:othercmd '-bar -count=0 Scriptnames'
+      \ 'call setqflist(scriptease#scriptnames_qflist()) |'
+      \ 'copen |'
+      \ '<count>'
 
 command! -bar -bang -nargs=? Messages :execute scriptease#messages_command(<bang>0, <q-args>)
 
@@ -63,24 +64,25 @@ command! -bang -bar -range=-1 -nargs=* -complete=customlist,scriptease#complete 
 command! -bang -bar -nargs=* -complete=customlist,scriptease#complete Disarm
       \ :exe scriptease#disarm_command(<bang>0, <f-args>)
 
-command! -range=-1 -nargs=? -complete=command Time :exe scriptease#time_command(<q-args>, <count>)
+exe s:othercmd '-range=-1 -nargs=? -complete=command Time'
+      \ 'exe scriptease#time_command(<q-args>, <count>)'
 
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Ve
-      \ :execute scriptease#open_command(<count>,'edit<bang>',<q-args>,0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vedit
-      \ :execute scriptease#open_command(<count>,'edit<bang>',<q-args>,0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vopen
-      \ :execute scriptease#open_command(<count>,'edit<bang>',<q-args>,1)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vsplit
-      \ :execute scriptease#open_command(<count>,'split',<q-args>,<bang>0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vvsplit
-      \ :execute scriptease#open_command(<count>,'vsplit',<q-args>,<bang>0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vtabedit
-      \ :execute scriptease#open_command(<count>,'tabedit',<q-args>,<bang>0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vpedit
-      \ :execute scriptease#open_command(<count>,'pedit<bang>',<q-args>,0)
-command! -bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vread
-      \ :execute scriptease#open_command(<count>,'read',<q-args>,<bang>0)
+exe s:othercmd '-bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Ve'
+      \ 'execute scriptease#open_command(<count>,"edit<bang>",<q-args>,0)'
+exe s:othercmd '-bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vedit'
+      \ 'execute scriptease#open_command(<count>,"edit<bang>",<q-args>,0)'
+exe s:othercmd '-bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vopen'
+      \ 'execute scriptease#open_command(<count>,"edit<bang>",<q-args>,1)'
+exe s:othercmd '-bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vsplit'
+      \ 'execute scriptease#open_command(<count>,"split",<q-args>,<bang>0)'
+exe s:othercmd '-bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vvsplit'
+      \ 'execute scriptease#open_command(<count>,"vsplit",<q-args>,<bang>0)'
+exe s:othercmd '-bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vtabedit'
+      \ 'execute scriptease#open_command(<count>,"tabedit",<q-args>,<bang>0)'
+exe s:othercmd '-bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vpedit'
+      \ 'execute scriptease#open_command(<count>,"pedit<bang>",<q-args>,0)'
+exe s:othercmd '-bar -bang -range=1 -nargs=1 -complete=customlist,scriptease#complete Vread'
+      \ 'execute scriptease#open_command(<count>,"read",<q-args>,<bang>0)'
 
 " Section: Maps
 
