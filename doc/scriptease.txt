@@ -54,6 +54,8 @@ g!                      Old alias for |g=|.
                         number combinations will be translated to the
                         appropriate file name and line number.
 
+:Messages clear         Clear all messages.
+
                                                 *scriptease-:PP*
 :PP {expr}              Pretty print the value of {expr}.
 

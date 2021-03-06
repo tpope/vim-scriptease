@@ -308,7 +308,10 @@ endfunction
 
 " Section: :Messages
 
-function! scriptease#messages_command(bang) abort
+function! scriptease#messages_command(bang, arg) abort
+  if !empty(a:arg)
+    return 'messages ' . a:arg
+  endif
   let qf = []
   let virtual = get(g:, 'virtual_scriptnames', {})
   for line in split(scriptease#capture('messages'), '\n\+')
