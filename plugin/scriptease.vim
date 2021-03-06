@@ -55,7 +55,7 @@ command! -bar -count=0 Scriptnames
       \ copen |
       \ <count>
 
-command! -bar -bang Messages :execute scriptease#messages_command(<bang>0)
+command! -bar -bang -nargs=? Messages :execute scriptease#messages_command(<bang>0, <q-args>)
 
 command! -bang -bar -range=-1 -nargs=* -complete=customlist,scriptease#complete Runtime
       \ :exe scriptease#runtime_command('<bang>', <f-args>)
