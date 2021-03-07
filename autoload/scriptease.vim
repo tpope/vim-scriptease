@@ -308,13 +308,14 @@ endfunction
 
 " Section: :Messages
 
-function! scriptease#messages_command(bang, arg) abort
+function! scriptease#messages_command(bang, count, arg) abort
+  let command = (a:count > -1 ? a:count : '') . 'messages'
   if !empty(a:arg)
-    return 'messages ' . a:arg
+    return command . ' ' . a:arg
   endif
   let qf = []
   let virtual = get(g:, 'virtual_scriptnames', {})
-  for line in split(scriptease#capture('messages'), '\n\+')
+  for line in split(scriptease#capture(command), '\n\+')
     let lnum = matchstr(line, '\C^line\s\+\zs\d\+\ze:$')
     if lnum && len(qf) && qf[-1].text =~# ':$'
       let qf[-1].text = substitute(qf[-1].text, ':$', '[' . lnum . ']:', '')

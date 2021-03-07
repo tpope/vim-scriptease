@@ -54,7 +54,12 @@ g!                      Old alias for |g=|.
                         number combinations will be translated to the
                         appropriate file name and line number.
 
+:{count}Messages        Show the {count} most recent messages.
+
 :Messages clear         Clear all messages.
+
+:{count}Messages clear  Clear messages, keeping on the {count} most recent
+                        ones.
 
                                                 *scriptease-:PP*
 :PP {expr}              Pretty print the value of {expr}.
