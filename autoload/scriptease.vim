@@ -347,8 +347,10 @@ function! scriptease#messages_command(bang, count, arg) abort
         let &list = list
       endtry
       let filename = expand(matchstr(get(output, 1, ''), 'from \zs.*'))
+      let filename = substitute(filename, ' \S\+ \d\+$', '', '')
       let filename = get(virtual, filename, filename)
       if !s:filereadable(filename)
+        let qf[-1].text .= string(filename)
         continue
       endif
       let implementation = map(output[2:-2], 'v:val[len(matchstr(output[-1],"^ *")) : -1]')
