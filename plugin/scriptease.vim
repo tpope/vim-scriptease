@@ -9,7 +9,7 @@ let g:loaded_scriptease = 1
 
 " Section: Commands
 
-let s:othercmd = has('patch-8.1.560') ? 'command! -addr=other' : 'command!'
+let s:othercmd = has('patch-8.1.560') || has('nvim-0.5') ? 'command! -addr=other' : 'command!'
 
 command! -bang -range=-1 -nargs=? -complete=expression PP
       \ if empty(<q-args>) |
