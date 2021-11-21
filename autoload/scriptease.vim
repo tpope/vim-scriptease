@@ -692,8 +692,9 @@ function! scriptease#time_command(cmd, count) abort
       execute a:cmd
     endif
   finally
+    let elapsed = reltime(time)
     redraw
-    echomsg matchstr(reltimestr(reltime(time)), '.*\..\{,3\}') . ' seconds to run :'.a:cmd
+    echomsg matchstr(reltimestr(elapsed), '.*\..\{,3\}') . ' seconds to run :'.a:cmd
   endtry
   return ''
 endfunction
