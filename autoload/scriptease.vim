@@ -282,7 +282,7 @@ function! scriptease#scriptnames_qflist() abort
   for line in split(names, "\n")
     if line =~# ':'
       let filename = expand(matchstr(line, ': \zs.*'))
-      call add(list, {'text': matchstr(line, '\d\+'), 'filename': get(virtual, filename, filename)})
+      call add(list, {'text': matchstr(line, '\d\+'), 'filename': get(virtual, filename, filename), 'lnum': 1})
     endif
   endfor
   return list
