@@ -24,7 +24,7 @@ command! -bang -range=-1 -nargs=? -complete=expression PP
       \       echon "\n" |
       \       let v:errmsg = '' |
       \       try |
-      \         call scriptease#pp_command(<bang>0, -1, eval(s:input)) |
+      \         call scriptease#pp_command(<bang>0, -1, eval(scriptease#prepare_eval(s:input))) |
       \       catch |
       \         echohl ErrorMsg |
       \         echo v:exception |
@@ -37,13 +37,13 @@ command! -bang -range=-1 -nargs=? -complete=expression PP
       \ endtry |
       \ else |
       \   let v:errmsg = '' |
-      \   call scriptease#pp_command(<bang>0, <count>, eval(<q-args>)) |
+      \   call scriptease#pp_command(<bang>0, <count>, eval(scriptease#prepare_eval(<q-args>))) |
       \ endif
 
 exe s:othercmd '-bang -range=0      -nargs=? -complete=expression PPmsg'
       \ 'if !empty(<q-args>) |'
       \ '  let v:errmsg = "" |'
-      \ '  call scriptease#ppmsg_command(<bang>0, <count>, empty(<q-args>) ? expand("<sfile>") : eval(<q-args>)) |'
+      \ '  call scriptease#ppmsg_command(<bang>0, <count>, empty(<q-args>) ? expand("<sfile>") : eval(scriptease#prepare_eval(<q-args>))) |'
       \ 'elseif &verbose >= <count> && !empty(expand("<sfile>")) |'
       \ ' echomsg expand("<sfile>").", line ".expand("<slnum>") |'
       \ 'endif'

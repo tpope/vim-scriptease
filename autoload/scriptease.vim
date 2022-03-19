@@ -303,7 +303,17 @@ function! scriptease#scriptid(filename) abort
       return +script.text
     endif
   endfor
-  return ''
+  return 0
+endfunction
+
+function! scriptease#prepare_eval(string, ...) abort
+  if a:string =~? '<sid>'
+    let sid = scriptease#scriptid(@%)
+    if sid
+      return substitute(a:string, '\c<sid>', '<SNR>' . sid . '_', 'g')
+    endif
+  endif
+  return a:string
 endfunction
 
 " Section: :Messages
@@ -581,10 +591,10 @@ function! s:break(type, arg) abort
     let lnum = searchpair('^\s*fu\%[nction]\>.*(', '', '^\s*endf\%[unction]\>', 'Wbn')
     if lnum && lnum < line('.')
       let function = matchstr(getline(lnum), '^\s*\w\+!\=\s*\zs[^( ]*')
-      if function =~# '^s:\|^<SID>'
+      if function =~# '^s:\|^<[Ss][Ii][Dd]>'
         let id = scriptease#scriptid('%')
         if id
-          let function = s:sub(function, '^s:|^\<SID\>', '<SNR>'.id.'_')
+          let function = s:sub(function, '^s:|^\<[Ss][Ii][Dd]\>', '<SNR>'.id.'_')
         else
           return 'echoerr "Could not determine script id"'
         endif
