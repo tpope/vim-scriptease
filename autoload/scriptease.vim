@@ -260,7 +260,7 @@ function! scriptease#verbose_command(level, excmd) abort
         \ 'finally|' .
         \ 'let &verbosefile = '.string(verbosefile).'|' .
         \ 'endtry|' .
-        \ 'pedit '.temp.'|wincmd P|nnoremap <buffer> q :bd<CR>'
+        \ 'pedit '.temp.'|wincmd P'
 endfunction
 
 " Section: :Scriptnames
