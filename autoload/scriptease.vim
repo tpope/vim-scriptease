@@ -461,7 +461,7 @@ function! scriptease#runtime_command(bang, ...) abort
     let files = a:000
   elseif &filetype ==# 'vim' || expand('%:e') ==# 'vim'
     let files = [scriptease#locate(expand('%:p'))[1]]
-    if empty(files[0])
+    if empty(files[0]) || files[0] =~# '^autoload[\/]'
       let files = ['%']
     endif
     if &modified && (&autowrite || &autowriteall)
@@ -487,12 +487,12 @@ function! scriptease#runtime_command(bang, ...) abort
       let request = scriptease#scriptname(request)
       let unlets += request =~# '[[*?{]' ? s:glob(request) : [expand(request)]
       let do += map(copy(unlets), '"source ".escape(v:val, " \t|!")')
+    elseif request =~# '^autoload[\/]'
+      let unlets += split(s:globrtp(request), "\n")[0:0]
+      let do += ['runtime ' . escape(request, " \t|!")]
     else
-      if get(do, 0, [''])[0] !~# '^runtime!'
-        let do += ['runtime!']
-      endif
       let unlets += split(s:globrtp(request), "\n")
-      let do[-1] .= ' '.escape(request, " \t|!")
+      let do += ['runtime! ' . escape(request, " \t|!")]
     endif
   endfor
   if empty(a:bang)
@@ -804,7 +804,7 @@ function! scriptease#setup_vim() abort
   cnoremap <expr><buffer> <Plug><cfile> scriptease#cfile()
 
   let runtime = scriptease#locate(expand('%:p'))[1]
-  let b:dispatch = ':Runtime ' . s:fnameescape(len(runtime) ? runtime : expand('%:p'))
+  let b:dispatch = ':Runtime ' . (runtime =~# '^$\|^autoload[\/]' ? '%:p' : s:fnameescape(runtime))
   command! -bar -bang -buffer Console Runtime|PP
   command! -buffer -bar -nargs=? -complete=custom,s:Complete_breakadd Breakadd
         \ :exe s:break('add',<q-args>)
