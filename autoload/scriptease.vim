@@ -250,7 +250,7 @@ endfunction
 " Section: :Verbose
 
 function! scriptease#verbose_command(level, excmd) abort
-  let temp = tempname()
+  let temp = tempname() . '.scriptease-verbose'
   let verbosefile = &verbosefile
   call writefile([':'.a:level.'Verbose '.a:excmd], temp, 'b')
   return
