@@ -116,14 +116,14 @@ augroup scriptease
   autocmd!
   autocmd FileType help call scriptease#setup_help()
   autocmd FileType vim call scriptease#setup_vim()
-  " Recent versions of vim.vim set iskeyword to include ":", which breaks among
+  " Older versions of vim.vim set iskeyword to include ":", which breaks among
   " other things tags. :(
   autocmd FileType vim
-        \ if get(g:, 'scriptease_iskeyword', 1) |
+        \ if get(g:, 'scriptease_iskeyword', 1) && &iskeyword =~# ':' |
         \   setlocal iskeyword-=: |
         \ endif
   autocmd Syntax vim
-        \ if get(g:, 'scriptease_iskeyword', 1) |
+        \ if get(g:, 'scriptease_iskeyword', 1) && &iskeyword =~# ':' |
         \   setlocal iskeyword-=: |
         \ endif
 augroup END
