@@ -767,7 +767,7 @@ endfunction
 " Section: Settings
 
 function! s:build_path() abort
-  let old_path = substitute(&g:path, '\v^\.,/%(usr|emx)/include,,,?', '', '')
+  let old_path = substitute(&g:path, '\C\v^\.,/%(usr|emx)/include,,', '.,,', '')
   let new_path = escape(&runtimepath, ' ')
   return !empty(old_path) ? old_path.','.new_path : new_path
 endfunction
