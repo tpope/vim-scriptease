@@ -1,6 +1,6 @@
 " scriptease.vim - An amalgamation of crap for editing runtime files
 " Maintainer:   Tim Pope <http://tpo.pe/>
-" Version:      1.0
+" Version:      1.1
 
 if exists('g:loaded_scriptease') || &cp
   finish
