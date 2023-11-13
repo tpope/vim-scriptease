@@ -690,16 +690,17 @@ endfunction
 " Section: :Time
 
 function! scriptease#time_command(cmd, count) abort
+  let cmd = scriptease#prepare_eval(a:cmd)
   let time = reltime()
   try
     if a:count > 1
       let i = 0
       while i < a:count
-        execute a:cmd
+        execute cmd
         let i += 1
       endwhile
     else
-      execute a:cmd
+      execute cmd
     endif
   finally
     let elapsed = reltime(time)
