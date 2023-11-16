@@ -225,6 +225,10 @@ function! s:opfunc(t) abort
   return @@
 endfunction
 
+function! s:noop(...)
+  return a:1
+endf
+
 function! scriptease#filterop(...) abort
   if !a:0
     set opfunc=scriptease#filterop
@@ -234,7 +238,11 @@ function! scriptease#filterop(...) abort
   try
     set selection=inclusive clipboard-=unnamed clipboard-=unnamedplus
     let expr = s:opfunc(a:1)
-    let @@ = matchstr(expr, '^\_s\+').scriptease#dump(eval(s:gsub(expr,'\n%(\s*\\)=',''))).matchstr(expr, '\_s\+$')
+    let code = s:function(get(g:, 'scriptease_prefilter', 's:noop'))(expr)
+    let filter_modified = code != expr
+    let code = s:gsub(code,'\n%(\s*\\)=','')
+    let @@ = matchstr(expr, '^\_s\+').scriptease#dump(eval(code)).matchstr(expr, '\_s\+$')
+    let @@ = s:function(get(g:, 'scriptease_postfilter', 's:noop'))(@@, filter_modified, expr)
     if @@ !~# '^\n*$'
       normal! gvp
     endif
