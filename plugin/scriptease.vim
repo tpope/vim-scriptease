@@ -57,7 +57,7 @@ exe s:othercmd '-bar -count=0 Scriptnames'
       \ '<count>'
 
 exe s:othercmd '-bar -bang -nargs=? -range=-1 Messages'
-      \ 'exe scriptease#messages_command(<bang>0, <count>, <q-args>)'
+      \ 'exe scriptease#messages_command(<bang>0, <count>, <q-args>, "<mods>")'
 
 command! -bang -bar -range=-1 -nargs=* -complete=customlist,scriptease#complete Runtime
       \ :exe scriptease#runtime_command('<bang>', <f-args>)
