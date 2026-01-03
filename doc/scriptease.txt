@@ -29,6 +29,26 @@ g==                     replace it with the result.  If you press g== on a
 {Visual}g=              Call |eval()| on the selection and replace it with the
                         result.
 
+                                                *g:scriptease_prefilter*
+                                                *g:scriptease_postfilter*
+Define these filter functions to modify selection before it's passed to
+|eval()| so you can convert your expressions to vim-compatible ones.
+>
+    function! StripFloatSuffix_Pre(input)
+      " Strip out f float suffixes.
+      return substitute(a:input, '\v\C(\d)f>', '\1', 'g')
+    endf
+    function! StripFloatSuffix_Post(expr, filter_modified, input)
+      if a:filter_modified
+        " We had f suffixes, so restore them.
+        return substitute(a:expr, '\v\C([0-9.]+)>', '\1f', 'g')
+      endif
+      return a:expr
+    endf
+    let g:scriptease_prefilter = 'StripFloatSuffix_Pre'
+    let g:scriptease_postfilter = 'StripFloatSuffix_Post'
+<
+
                                                 *scriptease-g!*
 g!                      Old alias for |g=|.
 
